@@ -10,3 +10,16 @@
     4. Find Admin
     5. Admin List
     7. Logout
+1. Projects
+    1. Bank System
+        - Libraries
+            - Utils
+            - Input
+            - Validation
+        - Login
+        - ~~Manage Clients~~
+        - Manage Admins
+            - Create New Admin
+            - Find Admin
+            - Admin List
+            - Logout
