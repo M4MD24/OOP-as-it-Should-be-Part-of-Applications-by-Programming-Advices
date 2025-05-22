@@ -1,6 +1,8 @@
 #pragma once
 #include <ctime>
 #include <cstdlib>
+#include <iomanip>
+#include <iostream>
 #include <string>
 
 using namespace std;
@@ -433,5 +435,55 @@ public:
         while (tabCount--)
             tabs += '\t';
         return tabs;
+    }
+
+    static void displayMenu(
+        const string &TITLE,
+        const short &COUNT_OF_LINES,
+        const string LINES[]
+    ) {
+        cout << "~{ " << TITLE << " }~" << endl;
+        for (short index = 0; index < COUNT_OF_LINES; ++index)
+            cout << (index + 1) << " - " << LINES[index] << endl;
+    }
+
+    static void displayMessage(
+        const string &MESSAGE
+    ) {
+        cout << MESSAGE << endl;
+    }
+
+    static void displayNote(
+        const string &MESSAGE
+    ) {
+        cout << "~ " << MESSAGE << endl;
+    }
+
+    static void displayMessage(
+        const string &MESSAGE,
+        const short &LENGTH
+    ) {
+        cout << setw(
+            LENGTH
+        ) << MESSAGE << "|";
+    }
+
+    static void displayMessage(
+        const bool &STATUS,
+        const short &LENGTH
+    ) {
+        cout << setw(
+            LENGTH
+        ) << boolalpha << STATUS << "|";
+    }
+
+    static void displayLine(
+        const char &CHARACTER,
+        const short &COUNT
+    ) {
+        cout << string(
+            COUNT,
+            CHARACTER
+        ) << endl;
     }
 };

@@ -1598,11 +1598,20 @@ public:
         return result;
     }
 
+    string getDateText() {
+        return to_string(
+                day
+            ) + delimiter
+            + to_string(
+                month
+            ) + delimiter
+            + to_string(
+                year
+            );
+    }
+
     void print() {
-        cout << day << delimiter
-            << month << delimiter
-            << year
-            << endl;
+        cout << getDateText() << endl;
     }
 
     static void showMonthCalendar(

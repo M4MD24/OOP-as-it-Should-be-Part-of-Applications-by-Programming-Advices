@@ -122,4 +122,47 @@ public:
     ) {
         return NUMBER >= FROM && NUMBER <= TO;
     }
+
+    static bool areTextNumbers(
+        const string &TEXT
+    ) {
+        for (const char &CHARACTER : TEXT)
+            if (
+                !isdigit(
+                    CHARACTER
+                )
+            )
+                return false;
+        return true;
+    }
+
+    static bool isEmail(
+        const string &EMAIL
+    ) {
+        const int AT_POSITION = EMAIL.find(
+            '@'
+        );
+
+        const int DOT_POSITION = EMAIL.find(
+            '.',
+            AT_POSITION + 1
+        );
+
+        if (
+            AT_POSITION <= 0 ||
+            AT_POSITION != EMAIL.rfind(
+                '@'
+            ) ||
+            AT_POSITION == EMAIL.length() - 1
+        )
+            return false;
+
+        if (
+            DOT_POSITION == string::npos ||
+            DOT_POSITION == EMAIL.length() - 1
+        )
+            return false;
+
+        return true;
+    }
 };
