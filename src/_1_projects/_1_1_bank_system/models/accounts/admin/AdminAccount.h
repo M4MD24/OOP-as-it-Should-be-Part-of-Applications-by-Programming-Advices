@@ -32,7 +32,8 @@ public:
         FindClient = 3,
         ClientList = 4,
         TransactionClient = 5,
-        Logout = 6
+        ClientEventLog = 6,
+        Logout = 7
     };
 
     enum ModifyMenuChoice {
@@ -339,8 +340,6 @@ private:
 
         if (file.is_open())
             file << RECORD_TEXT << endl;
-
-        file.close();
     }
 
     AdminAccount(): PersonAccount(
@@ -442,9 +441,9 @@ public:
         if (file.is_open())
             for (AdminAccount account : ACCOUNTS)
                 if (account.getUsername() != targetAccount.getUsername())
-                    file << convertRecordToText(
+                    saveAccountOnFile(
                         account
-                    ) << endl;
+                    );
 
         Utils::displayMessage(
             "The admin account has been deleted."
@@ -454,7 +453,7 @@ public:
     }
 
     static void modifyAccount(
-        AdminAccount &targetAccount
+        const AdminAccount &TARGET_ACCOUNT
     ) {
         const vector<AdminAccount> ACCOUNTS = readAccountsFileToRecords();
 
@@ -464,15 +463,15 @@ public:
         };
 
         if (file.is_open())
-            for (AdminAccount currentAccount : ACCOUNTS)
-                if (targetAccount.username != currentAccount.username)
-                    file << convertRecordToText(
-                        currentAccount
-                    ) << endl;
+            for (const AdminAccount &CURRENT_ACCOUNT : ACCOUNTS)
+                if (TARGET_ACCOUNT.username != CURRENT_ACCOUNT.username)
+                    saveAccountOnFile(
+                        CURRENT_ACCOUNT
+                    );
                 else
-                    file << convertRecordToText(
-                        targetAccount
-                    ) << endl;
+                    saveAccountOnFile(
+                        TARGET_ACCOUNT
+                    );
 
         Utils::displayMessage(
             "The admin account has been modified."
@@ -804,7 +803,7 @@ public:
     }
 
     static bool isValidAccountByUsername(
-        AdminAccount &currentAccount,
+        AdminAccount currentAccount,
         AdminAccount targetAccount,
         const bool PRINT_TABLE,
         const bool PRINT_NOT_FOUND_MESSAGE

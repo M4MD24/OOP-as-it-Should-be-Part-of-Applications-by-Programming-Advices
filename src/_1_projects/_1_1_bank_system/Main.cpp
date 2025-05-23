@@ -125,20 +125,27 @@ void modifyMenu(
         switch (static_cast<AdminAccount::ModifyMenuChoice>(choice - 1)) {
         case AdminAccount::Username: {
             string username;
+            bool found = false;
             do {
                 Input::readUsername(
                     username
                 );
+
+                if (username == targetAccount.getUsername())
+                    found = false;
+                else
+                    found = AdminAccount::isValidAccountByUsername(
+                        {
+                            username
+                        },
+                        AdminAccount::findByUsernameInFile(
+                            targetAccount
+                        ),
+                        false,
+                        false
+                    );
             } while (
-                username != targetAccount.getUsername() &&
-                AdminAccount::isValidAccountByUsername(
-                    targetAccount,
-                    AdminAccount::findByUsernameInFile(
-                        targetAccount
-                    ),
-                    false,
-                    false
-                )
+                found
             );
 
             targetAccount.setUsername(
@@ -226,10 +233,15 @@ void modifyMenu(
 
         if (
             confirm
-        )
+        ) {
+            targetAccount.setLastModifyDate(
+                {}
+            );
+
             AdminAccount::modifyAccount(
                 targetAccount
             );
+        }
     } while (true);
 }
 
