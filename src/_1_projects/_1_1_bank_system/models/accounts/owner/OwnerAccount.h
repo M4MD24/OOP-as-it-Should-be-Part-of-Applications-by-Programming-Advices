@@ -7,11 +7,12 @@
 #include "../../../libraries/date/Date.h"
 #include "../../../libraries/String.h"
 #include "../../../constants/FilePaths.h"
+#include "../../../constants/Lengths.h"
 #include "../../../libraries/Utils.h"
 
 using namespace std;
 
-class OwnerAccount : protected PersonAccount {
+class OwnerAccount : public PersonAccount {
 public:
     enum OwnerMenuChoice {
         CreateNewAdmin = 0,
@@ -20,8 +21,7 @@ public:
         FindAdmin = 3,
         AdminList = 4,
         TotalBalances = 5,
-        AdminEventLog = 6,
-        Logout = 7
+        Logout = 6
     };
 
 private:
@@ -32,7 +32,7 @@ private:
         OwnerAccount &ownerAccount,
         const vector<string> &FIELDS
     ) {
-        if (FIELDS.size() == 9) {
+        if (FIELDS.size() == Lengths::Person::Owner::COUNT_OF_FIELDS) {
             ownerAccount.setUsername(
                 FIELDS[0]
             );

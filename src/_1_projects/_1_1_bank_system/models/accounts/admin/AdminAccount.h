@@ -14,13 +14,13 @@
 
 using namespace std;
 
-class AdminAccount : protected PersonAccount {
+class AdminAccount : public PersonAccount {
 public:
     enum AdminPermission {
         Create = 0,
         Modify = 1,
         Delete = 2,
-        Find = 3,
+        Search = 3,
         ShowList = 4,
         Transaction = 5
     };
@@ -33,6 +33,28 @@ public:
         ClientList = 4,
         TransactionClient = 5,
         Logout = 6
+    };
+
+    enum ModifyMenuChoice {
+        Username = 0,
+        Password = 1,
+        FirstName = 2,
+        SecondName = 3,
+        CountryCode = 4,
+        ContactNumber = 5,
+        Email = 6,
+        Permissions = 7,
+        BackToManageAdminsMenu = 8
+    };
+
+    enum ModifyPermissionsMenuChoice {
+        CreatePermission = 0,
+        ModifyPermission = 1,
+        DeletePermission = 2,
+        SearchPermission = 3,
+        ShowListPermission = 4,
+        TransactionPermission = 5,
+        BackToModifyAdminsMenu = 6
     };
 
 private:
@@ -72,7 +94,7 @@ private:
         AdminAccount &adminAccount,
         const vector<string> &FIELDS
     ) {
-        if (FIELDS.size() == 10) {
+        if (FIELDS.size() == Lengths::Person::Admin::COUNT_OF_FIELDS) {
             adminAccount.setUsername(
                 FIELDS[0]
             );
@@ -304,7 +326,7 @@ private:
     }
 
     static void saveAccountOnFile(
-        AdminAccount &account
+        AdminAccount account
     ) {
         const string RECORD_TEXT = convertRecordToText(
             account
@@ -407,70 +429,181 @@ public:
         return permissions;
     }
 
+    static void deleteAccount(
+        AdminAccount &targetAccount
+    ) {
+        const vector<AdminAccount> ACCOUNTS = readAccountsFileToRecords();
+
+        fstream file(
+            FilePaths::ADMIN_ACCOUNTS_FILE_PATH,
+            ios::out | ios::trunc
+        );
+
+        if (file.is_open())
+            for (AdminAccount account : ACCOUNTS)
+                if (account.getUsername() != targetAccount.getUsername())
+                    file << convertRecordToText(
+                        account
+                    ) << endl;
+
+        Utils::displayMessage(
+            "The admin account has been deleted."
+        );
+
+        file.close();
+    }
+
+    static void modifyAccount(
+        AdminAccount &targetAccount
+    ) {
+        const vector<AdminAccount> ACCOUNTS = readAccountsFileToRecords();
+
+        fstream file {
+            FilePaths::ADMIN_ACCOUNTS_FILE_PATH,
+            ios::out | ios::trunc
+        };
+
+        if (file.is_open())
+            for (AdminAccount currentAccount : ACCOUNTS)
+                if (targetAccount.username != currentAccount.username)
+                    file << convertRecordToText(
+                        currentAccount
+                    ) << endl;
+                else
+                    file << convertRecordToText(
+                        targetAccount
+                    ) << endl;
+
+        Utils::displayMessage(
+            "The admin account has been modified."
+        );
+
+        file.close();
+    }
+
+    static void readPermission(
+        vector<AdminPermission> &permissions,
+        const AdminPermission &PERMISSION,
+        const string &MESSAGE,
+        bool &status
+    ) {
+        if (
+            Input::readPermission(
+                status,
+                MESSAGE
+            )
+        )
+            permissions.push_back(
+                PERMISSION
+            );
+    }
+
+    static void readCreatePermission(
+        vector<AdminPermission> &permissions,
+        bool &status
+    ) {
+        readPermission(
+            permissions,
+            Create,
+            Texts::Person::Admin::Permissions::Text::CREATE,
+            status
+        );
+    }
+
+    static void readModifyPermission(
+        vector<AdminPermission> &permissions,
+        bool &status
+    ) {
+        readPermission(
+            permissions,
+            Modify,
+            Texts::Person::Admin::Permissions::Text::MODIFY,
+            status
+        );
+    }
+
+    static void readDeletePermission(
+        vector<AdminPermission> &permissions,
+        bool &status
+    ) {
+        readPermission(
+            permissions,
+            Delete,
+            Texts::Person::Admin::Permissions::Text::DELETE,
+            status
+        );
+    }
+
+    static void readSearchPermission(
+        vector<AdminPermission> &permissions,
+        bool &status
+    ) {
+        readPermission(
+            permissions,
+            Search,
+            Texts::Person::Admin::Permissions::Text::SEARCH,
+            status
+        );
+    }
+
+    static void readShowListPermission(
+        vector<AdminPermission> &permissions,
+        bool &status
+    ) {
+        readPermission(
+            permissions,
+            ShowList,
+            Texts::Person::Admin::Permissions::Text::SHOW_LIST,
+            status
+        );
+    }
+
+    static void readTransactionPermission(
+        vector<AdminPermission> &permissions,
+        bool &status
+    ) {
+        readPermission(
+            permissions,
+            Transaction,
+            Texts::Person::Admin::Permissions::Text::TRANSACTION,
+            status
+        );
+    }
+
     static void readPermissions(
         vector<AdminPermission> &permissions
     ) {
         bool status;
 
-        if (
-            Input::readPermission(
-                status,
-                "Can Create?"
-            )
-        )
-            permissions.push_back(
-                Create
-            );
+        readCreatePermission(
+            permissions,
+            status
+        );
 
-        if (
-            Input::readPermission(
-                status,
-                "Can Modify?"
-            )
-        )
-            permissions.push_back(
-                Modify
-            );
+        readModifyPermission(
+            permissions,
+            status
+        );
 
-        if (
-            Input::readPermission(
-                status,
-                "Can Delete?"
-            )
-        )
-            permissions.push_back(
-                Delete
-            );
+        readDeletePermission(
+            permissions,
+            status
+        );
 
-        if (
-            Input::readPermission(
-                status,
-                "Can Find?"
-            )
-        )
-            permissions.push_back(
-                Find
-            );
+        readSearchPermission(
+            permissions,
+            status
+        );
 
-        if (
-            Input::readPermission(
-                status,
-                "Can Show List?"
-            )
-        )
-            permissions.push_back(
-                ShowList
-            );
+        readShowListPermission(
+            permissions,
+            status
+        );
 
-        if (
-            Input::readPermission(
-                status,
-                "Can Transaction?"
-            )
-        )
-            permissions.push_back(
-                Transaction
-            );
+        readTransactionPermission(
+            permissions,
+            status
+        );
     }
 
     static void createAccount() {
@@ -490,6 +623,7 @@ public:
                 findByUsernameInFile(
                     currentAccount
                 ),
+                false,
                 false
             )
         );
@@ -547,7 +681,7 @@ public:
         );
 
         Utils::displayMessage(
-            "A new administrator has been added."
+            "The admin account has been created."
         );
     }
 
@@ -672,7 +806,8 @@ public:
     static bool isValidAccountByUsername(
         AdminAccount &currentAccount,
         AdminAccount targetAccount,
-        const bool PRINT_TABLE = true
+        const bool PRINT_TABLE,
+        const bool PRINT_NOT_FOUND_MESSAGE
     ) {
         if (currentAccount.getUsername() == targetAccount.getUsername()) {
             if (PRINT_TABLE)
@@ -681,7 +816,7 @@ public:
                 );
             return true;
         }
-        if (PRINT_TABLE)
+        if (PRINT_NOT_FOUND_MESSAGE)
             Utils::displayMessage(
                 "Isn't Found!"
             );

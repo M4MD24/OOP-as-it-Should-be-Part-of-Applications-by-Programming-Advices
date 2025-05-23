@@ -270,7 +270,7 @@ public:
         );
     }
 
-    static void readFirstNAme(
+    static void readFirstName(
         string &firstName
     ) {
         do
@@ -286,7 +286,7 @@ public:
         );
     }
 
-    static void readSecondNAme(
+    static void readSecondName(
         string &secondName
     ) {
         do
@@ -305,10 +305,10 @@ public:
     static void readFullName(
         PersonAccount::FullName &fullName
     ) {
-        readFirstNAme(
+        readFirstName(
             fullName.firstName
         );
-        readSecondNAme(
+        readSecondName(
             fullName.secondName
         );
     }

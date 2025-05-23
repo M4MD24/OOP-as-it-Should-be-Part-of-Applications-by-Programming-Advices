@@ -42,7 +42,7 @@ public:
         );
     }
 
-    void setFirstNAme(
+    void setFirstName(
         const string &FIRST_NAME
     ) {
         fullName.firstName = FIRST_NAME;

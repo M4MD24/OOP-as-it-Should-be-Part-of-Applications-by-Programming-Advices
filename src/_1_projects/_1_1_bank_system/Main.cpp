@@ -6,19 +6,252 @@
 #include "models/accounts/admin/AdminAccount.h"
 #include "models/accounts/owner/OwnerAccount.h"
 
-[[noreturn]] void ownerMenu() {
+void modifyPermissionsMenu(
+    vector<AdminAccount::AdminPermission> &permissions
+) {
+    do {
+        Utils::displayMenu(
+            Texts::Person::Owner::MODIFY_PERMISSIONS_MENU_TITLE,
+            Lengths::Person::Owner::COUNT_OF_MODIFY_PERMISSIONS_MENU,
+            Texts::Person::Owner::MODIFY_PERMISSIONS_MENU_LINES
+        );
+
+        short choice;
+        Input::readChoice(
+            choice,
+            1,
+            Lengths::Person::Owner::COUNT_OF_MODIFY_PERMISSIONS_MENU
+        );
+
+        bool status;
+        AdminAccount::AdminPermission permission = {};
+
+        switch (static_cast<AdminAccount::ModifyPermissionsMenuChoice>(choice - 1)) {
+        case AdminAccount::CreatePermission: {
+            permission = AdminAccount::Create;
+            Input::readPermission(
+                status,
+                Texts::Person::Admin::Permissions::Text::CREATE
+            );
+            break;
+        }
+
+        case AdminAccount::ModifyPermission: {
+            permission = AdminAccount::Modify;
+            Input::readPermission(
+                status,
+                Texts::Person::Admin::Permissions::Text::MODIFY
+            );
+            break;
+        }
+        case AdminAccount::DeletePermission: {
+            permission = AdminAccount::Delete;
+            Input::readPermission(
+                status,
+                Texts::Person::Admin::Permissions::Text::DELETE
+            );
+            break;
+        }
+        case AdminAccount::SearchPermission: {
+            permission = AdminAccount::Search;
+            Input::readPermission(
+                status,
+                Texts::Person::Admin::Permissions::Text::SEARCH
+            );
+            break;
+        }
+        case AdminAccount::ShowListPermission: {
+            permission = AdminAccount::ShowList;
+            Input::readPermission(
+                status,
+                Texts::Person::Admin::Permissions::Text::SHOW_LIST
+            );
+            break;
+        }
+        case AdminAccount::TransactionPermission: {
+            permission = AdminAccount::Transaction;
+            Input::readPermission(
+                status,
+                Texts::Person::Admin::Permissions::Text::TRANSACTION
+            );
+            break;
+        }
+        case AdminAccount::BackToModifyAdminsMenu: { return; }
+        default: { break; }
+        }
+
+        bool permissionFound = false;
+        short index = 0;
+        while (index < permissions.size()) {
+            if (permissions[index] == permission) {
+                permissionFound = true;
+                break;
+            }
+            index++;
+        }
+
+        if (status == 1 && !permissionFound)
+            permissions.push_back(
+                permission
+            );
+        else if (status == 0 && permissionFound)
+            permissions.erase(
+                permissions.begin() + index
+            );
+    } while (true);
+}
+
+void modifyMenu(
+    AdminAccount targetAccount
+) {
+    do {
+        AdminAccount::printAccountTable(
+            targetAccount
+        );
+
+        Utils::displayMenu(
+            Texts::Person::Owner::MODIFY_MENU_TITLE,
+            Lengths::Person::Owner::COUNT_OF_MODIFY_MENU,
+            Texts::Person::Owner::MODIFY_MENU_LINES
+        );
+
+        short choice;
+        Input::readChoice(
+            choice,
+            1,
+            Lengths::Person::Owner::COUNT_OF_MODIFY_MENU
+        );
+
+        switch (static_cast<AdminAccount::ModifyMenuChoice>(choice - 1)) {
+        case AdminAccount::Username: {
+            string username;
+            do {
+                Input::readUsername(
+                    username
+                );
+            } while (
+                username != targetAccount.getUsername() &&
+                AdminAccount::isValidAccountByUsername(
+                    targetAccount,
+                    AdminAccount::findByUsernameInFile(
+                        targetAccount
+                    ),
+                    false,
+                    false
+                )
+            );
+
+            targetAccount.setUsername(
+                username
+            );
+            break;
+        }
+
+        case AdminAccount::Password: {
+            string password;
+            Input::readPassword(
+                password
+            );
+            targetAccount.setPassword(
+                password
+            );
+            break;
+        }
+
+        case AdminAccount::FirstName: {
+            string firstName;
+            Input::readFirstName(
+                firstName
+            );
+            targetAccount.setFirstName(
+                firstName
+            );
+            break;
+        }
+
+        case AdminAccount::SecondName: {
+            string secondName;
+            Input::readSecondName(
+                secondName
+            );
+            targetAccount.setSecondName(
+                secondName
+            );
+            break;
+        }
+
+        case AdminAccount::CountryCode: {
+            string countryCode;
+            Input::readCountryCode(
+                countryCode
+            );
+            targetAccount.setCountryCode(
+                countryCode
+            );
+            break;
+        }
+
+        case AdminAccount::Email: {
+            string email;
+            Input::readEmail(
+                email
+            );
+            targetAccount.setEmail(
+                email
+            );
+            break;
+        }
+
+        case AdminAccount::Permissions: {
+            vector<AdminAccount::AdminPermission> permissions = targetAccount.getPermissions();
+            modifyPermissionsMenu(
+                permissions
+            );
+            targetAccount.setPermissions(
+                permissions
+            );
+            break;
+        }
+
+        case AdminAccount::BackToManageAdminsMenu: { return; }
+
+        default: { break; }
+        }
+
+        bool confirm;
+        Input::readBoolean(
+            confirm,
+            Texts::CONFIRM_MESSAGE
+        );
+
+        if (
+            confirm
+        )
+            AdminAccount::modifyAccount(
+                targetAccount
+            );
+    } while (true);
+}
+
+void ownerMenu() {
     short choice;
     do {
         Utils::displayMenu(
             Texts::Person::Owner::MENU_TITLE,
-            Lengths::Person::Owner::COUNT_OF_LINES,
+            Lengths::Person::Owner::COUNT_OF_MENU_LINES,
             Texts::Person::Owner::LINES
         );
 
         Input::readChoice(
             choice,
             1,
-            Lengths::Person::Owner::COUNT_OF_LINES
+            Lengths::Person::Owner::COUNT_OF_MENU_LINES
+        );
+
+        Utils::displayMenu(
+            Texts::Person::Owner::LINES[choice - 1],
+            0,
+            {}
         );
 
         switch (static_cast<OwnerAccount::OwnerMenuChoice>(choice - 1)) {
@@ -27,18 +260,70 @@
             break;
         }
         case OwnerAccount::OwnerMenuChoice::ModifyAdmin: {
+            string username;
+            Input::readUsername(
+                username
+            );
+
+            AdminAccount currentAdminAccount {
+                username
+            };
+
+            const AdminAccount TARGET_ACCOUNT = AdminAccount::findByUsernameInFile(
+                currentAdminAccount
+            );
+
+            if (
+                AdminAccount::isValidAccountByUsername(
+                    currentAdminAccount,
+                    TARGET_ACCOUNT,
+                    false,
+                    true
+                )
+            )
+                modifyMenu(
+                    TARGET_ACCOUNT
+                );
             break;
         }
         case OwnerAccount::OwnerMenuChoice::DeleteAdmin: {
+            string username;
+            Input::readUsername(
+                username
+            );
+
+            AdminAccount currentAdminAccount {
+                username
+            };
+
+            AdminAccount targetAccount = AdminAccount::findByUsernameInFile(
+                currentAdminAccount
+            );
+
+            if (
+                AdminAccount::isValidAccountByUsername(
+                    currentAdminAccount,
+                    targetAccount,
+                    true,
+                    true
+                )
+            ) {
+                bool confirm;
+                Input::readBoolean(
+                    confirm,
+                    Texts::CONFIRM_MESSAGE
+                );
+
+                if (
+                    confirm
+                )
+                    AdminAccount::deleteAccount(
+                        targetAccount
+                    );
+            }
             break;
         }
         case OwnerAccount::OwnerMenuChoice::FindAdmin: {
-            Utils::displayMenu(
-                Texts::Person::Owner::LINES[choice - 1],
-                0,
-                {}
-            );
-
             string username;
             Input::readUsername(
                 username
@@ -55,6 +340,7 @@
             AdminAccount::isValidAccountByUsername(
                 currentAdminAccount,
                 TARGET_ACCOUNT,
+                true,
                 true
             );
             break;
@@ -66,28 +352,25 @@
         case OwnerAccount::OwnerMenuChoice::TotalBalances: {
             break;
         }
-        case OwnerAccount::OwnerMenuChoice::AdminEventLog: {
-            break;
-        }
         case OwnerAccount::OwnerMenuChoice::Logout: { return; }
         default: { break; }
         }
     } while (true);
 }
 
-[[noreturn]] void adminMenu() {
+void adminMenu() {
     short choice;
     do {
         Utils::displayMenu(
             Texts::Person::Admin::MENU_TITLE,
-            Lengths::Person::Admin::COUNT_OF_LINES,
+            Lengths::Person::Admin::COUNT_OF_MENU_LINES,
             Texts::Person::Admin::LINES
         );
 
         Input::readChoice(
             choice,
             1,
-            Lengths::Person::Admin::COUNT_OF_LINES
+            Lengths::Person::Admin::COUNT_OF_MENU_LINES
         );
 
         /*switch (static_cast<AdminAccount::AdminMenuChoice>(choice- 1)) {
@@ -155,7 +438,7 @@ void performAccountTypeLoginMenu() {
 
     Utils::displayMenu(
         Texts::Login::LOGIN_CHOICES_MENU_TITLE,
-        Lengths::Login::COUNT_OF_LINES,
+        Lengths::Login::COUNT_OF_MENU_LINES,
         Texts::Login::LINES
     );
 
@@ -167,7 +450,7 @@ void performAccountTypeLoginMenu() {
         Validation::isBetweenNumbers(
             choice,
             static_cast<short>(1),
-            Lengths::Login::COUNT_OF_LINES
+            Lengths::Login::COUNT_OF_MENU_LINES
         )
     )
         login(
@@ -177,7 +460,7 @@ void performAccountTypeLoginMenu() {
         );
 }
 
-[[noreturn]] void startProgram() {
+void startProgram() {
     while (true)
         performAccountTypeLoginMenu();
 }

@@ -12,7 +12,7 @@
 
 using namespace std;
 
-class ClientAccount : protected PersonAccount {
+class ClientAccount : public PersonAccount {
     string id;
     string pinCode;
     vector<Balance> balances;
@@ -166,7 +166,6 @@ public:
                     line
                 )
             ) {
-
                 ClientAccount account;
                 vector<string> fields;
 

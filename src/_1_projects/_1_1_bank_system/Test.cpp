@@ -2,5 +2,5 @@
 
 int main() {
     // AdminAccount::createAccount();
-    AdminAccount::showList();
+    // AdminAccount::showList();
 }

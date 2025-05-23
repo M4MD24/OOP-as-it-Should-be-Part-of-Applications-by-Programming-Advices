@@ -105,21 +105,21 @@ public:
         const float FROM,
         const float TO
     ) {
-        return FROM + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (TO - FROM);;
+        return FROM + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (TO - FROM);
     }
 
     static double randomNumber(
         const double FROM,
         const double TO
     ) {
-        return FROM + static_cast<double>(rand()) / static_cast<double>(RAND_MAX) * (TO - FROM);;
+        return FROM + static_cast<double>(rand()) / static_cast<double>(RAND_MAX) * (TO - FROM);
     }
 
     static long double randomNumber(
         const long double FROM,
         const long double TO
     ) {
-        return FROM + static_cast<long double>(rand()) / static_cast<long double>(RAND_MAX) * (TO - FROM);;
+        return FROM + static_cast<long double>(rand()) / static_cast<long double>(RAND_MAX) * (TO - FROM);
     }
 
     static char randomLetter() {

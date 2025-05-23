@@ -5,7 +5,7 @@ using namespace std;
 
 namespace Lengths {
     namespace Login {
-        constexpr short COUNT_OF_LINES = 2;
+        constexpr short COUNT_OF_MENU_LINES = 2;
     }
 
     namespace Person {
@@ -20,14 +20,20 @@ namespace Lengths {
         constexpr short LAST_MODIFY_DATE = 16;
 
         namespace Owner {
-            constexpr short COUNT_OF_LINES = 8;
+            constexpr short COUNT_OF_MENU_LINES = 8;
 
             constexpr short USERNAME = Limits::Username::MAXIMUM;
             constexpr short PASSWORD = Limits::Password::MAXIMUM;
+
+            constexpr short COUNT_OF_FIELDS = 9;
+
+            constexpr short COUNT_OF_MODIFY_MENU = 9;
+
+            constexpr short COUNT_OF_MODIFY_PERMISSIONS_MENU = 7;
         }
 
         namespace Admin {
-            constexpr short COUNT_OF_LINES = 7;
+            constexpr short COUNT_OF_MENU_LINES = 7;
 
             constexpr short LINE_LENGTH = 214;
 
@@ -44,6 +50,8 @@ namespace Lengths {
                 constexpr short SHOW_LIST = 9;
                 constexpr short TRANSACTION = 11;
             }
+
+            constexpr short COUNT_OF_FIELDS = 10;
         }
 
         namespace Client {}

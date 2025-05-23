@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Lengths.h"
+
 using namespace std;
 
 namespace Texts {
@@ -42,6 +44,32 @@ namespace Texts {
 
             const string USERNAME = "Username";
             const string PASSWORD = "Password";
+
+            const string MODIFY_MENU_TITLE = "Modify Admin Menu";
+
+            const string MODIFY_MENU_LINES[] = {
+                "Username",
+                "Password",
+                "First Name",
+                "Second Name",
+                "Country Code",
+                "Contact Number",
+                "Email",
+                "Permissions",
+                "Back to ~{Manage Admins Menu}~"
+            };
+
+            const string MODIFY_PERMISSIONS_MENU_TITLE = "Modify Permissions Menu";
+
+            const string MODIFY_PERMISSIONS_MENU_LINES[] = {
+                "Create",
+                "Modify",
+                "Delete",
+                "Search",
+                "Show List",
+                "Transaction",
+                "Back to ~{Modify Admin Menu}~"
+            };
         }
 
         namespace Admin {
@@ -69,6 +97,15 @@ namespace Texts {
                 const string SEARCH = "Search";
                 const string SHOW_LIST = "Show List";
                 const string TRANSACTION = "Transaction";
+
+                namespace Text {
+                    const string CREATE = "Can Create";
+                    const string MODIFY = "Can Modify";
+                    const string DELETE = "Can Delete";
+                    const string SEARCH = "Can Search";
+                    const string SHOW_LIST = "Can Show List";
+                    const string TRANSACTION = "Can Transaction";
+                }
             }
 
             const string LIST_COUNTER_MESSAGE = "Admin Count = ";
@@ -76,4 +113,6 @@ namespace Texts {
 
         namespace Client {}
     }
+
+    const string CONFIRM_MESSAGE = "Are you sure?";
 }
