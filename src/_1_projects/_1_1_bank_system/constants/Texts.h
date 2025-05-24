@@ -114,6 +114,7 @@ namespace Texts {
         namespace Client {
             const string LIST_COUNTER_MESSAGE = "Client Count = ";
             constexpr char LINE_CHARACTER = '#';
+            constexpr char ID_DELIMITER = '-';
         }
     }
 

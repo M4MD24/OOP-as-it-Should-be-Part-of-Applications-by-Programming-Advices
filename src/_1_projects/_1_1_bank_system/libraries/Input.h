@@ -413,7 +413,7 @@ public:
                 "Enter PIN Code:"
             );
         while (
-            pinCode.length() != 4 ||
+            pinCode.length() != Lengths::Person::Client::PIN_CODE ||
             !Validation::areTextNumbers(
                 pinCode
             )
@@ -438,7 +438,7 @@ public:
                 "Enter Balance Code:"
             );
         } while (
-            code.length() != 3 ||
+            code.length() != Lengths::Person::Client::BALANCE_CODE ||
             !Validation::areTextCharacters(
                 code
             )
@@ -460,6 +460,29 @@ public:
                     count
                 )
             )
+        );
+    }
+
+    static void readID(
+        string &id
+    ) {
+        short delimiterCount;
+        do {
+            readText(
+                id,
+                "Enter ID:"
+            );
+            delimiterCount = 0;
+            for (
+                short index = 0;
+                delimiterCount < 3 && index < Lengths::Person::Client::ID;
+                index++
+            )
+                if (id[index] == Texts::Person::Client::ID_DELIMITER)
+                    delimiterCount++;
+        } while (
+            id.length() != Lengths::Person::Client::ID ||
+            delimiterCount != 3
         );
     }
 };

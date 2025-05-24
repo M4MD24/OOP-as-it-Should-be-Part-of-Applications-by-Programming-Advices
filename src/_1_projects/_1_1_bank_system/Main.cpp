@@ -330,16 +330,16 @@ void ownerMenu() {
                 username
             );
 
-            AdminAccount currentAdminAccount {
+            AdminAccount currentAccount {
                 username
             };
 
             const AdminAccount TARGET_ACCOUNT = AdminAccount::findByUsernameInFile(
-                currentAdminAccount
+                currentAccount
             );
 
             AdminAccount::isValidAccountByUsername(
-                currentAdminAccount,
+                currentAccount,
                 TARGET_ACCOUNT,
                 true,
                 true
@@ -387,8 +387,32 @@ void adminMenu() {
         }
         case AdminAccount::AdminMenuChoice::ModifyClient: { return; }
         case AdminAccount::AdminMenuChoice::DeleteClient: { return; }
-        case AdminAccount::AdminMenuChoice::FindClient: { return; }
-        case AdminAccount::AdminMenuChoice::ClientList: { return; }
+        case AdminAccount::AdminMenuChoice::FindClient: {
+            string id;
+            Input::readID(
+                id
+            );
+
+            ClientAccount currentAccount {
+                id
+            };
+
+            const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
+                currentAccount
+            );
+
+            ClientAccount::isValidAccountByID(
+                currentAccount,
+                TARGET_ACCOUNT,
+                true,
+                true
+            );
+            break;
+        }
+        case AdminAccount::AdminMenuChoice::ClientList: {
+            ClientAccount::showList();
+            break;
+        }
         case AdminAccount::AdminMenuChoice::TransactionClient: { return; }
         case AdminAccount::AdminMenuChoice::ClientEventLog: { return; }
         case AdminAccount::AdminMenuChoice::Logout: { return; }

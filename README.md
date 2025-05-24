@@ -9,6 +9,7 @@
         - Login
         - ~~Manage Clients~~
             - Create New Client
+            - Find Client
             - Client List
             - Logout
         - Manage Admins

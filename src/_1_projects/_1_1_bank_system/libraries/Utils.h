@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 
+#include "../constants/Texts.h"
+
 using namespace std;
 
 class Utils {
@@ -248,13 +250,13 @@ public:
     static string generateKey() {
         return randomText(
                 4
-            ) + '-' +
+            ) + Texts::Person::Client::ID_DELIMITER +
             randomText(
                 4
-            ) + '-' +
+            ) + Texts::Person::Client::ID_DELIMITER +
             randomText(
                 4
-            ) + '-' +
+            ) + Texts::Person::Client::ID_DELIMITER +
             randomText(
                 4
             );

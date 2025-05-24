@@ -267,6 +267,41 @@ public:
         return balances;
     }
 
+    static bool isValidAccountByID(
+        ClientAccount currentAccount,
+        ClientAccount targetAccount,
+        const bool &PRINT_INFORMATION,
+        const bool &PRINT_NOT_FOUND_MESSAGE
+    ) {
+        if (currentAccount.getID() == targetAccount.getID()) {
+            if (PRINT_INFORMATION) {
+                printAccountInformation(
+                    targetAccount
+                );
+                Utils::displayLine(
+                    Texts::Person::Client::LINE_CHARACTER,
+                    Lengths::Person::Client::LINE_LENGTH
+                );
+            }
+            return true;
+        }
+        if (PRINT_NOT_FOUND_MESSAGE)
+            Utils::displayMessage(
+                "Isn't Found"
+            );
+        return false;
+    }
+
+    static ClientAccount findByID_InFile(
+        ClientAccount &targetClientAccount
+    ) {
+        for (ClientAccount &currentClientAccount : readAccountsFileToRecords()) {
+            if (currentClientAccount.getID() == targetClientAccount.getID())
+                return currentClientAccount;
+        }
+        return {};
+    }
+
     static void readBalances(
         vector<Balance> &balances
     ) {
