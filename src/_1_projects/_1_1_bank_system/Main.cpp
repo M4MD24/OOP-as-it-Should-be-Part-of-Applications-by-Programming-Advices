@@ -4,6 +4,7 @@
 #include "libraries/Utils.h"
 #include "libraries/Validation.h"
 #include "models/accounts/admin/AdminAccount.h"
+#include "models/accounts/client/ClientAccount.h"
 #include "models/accounts/owner/OwnerAccount.h"
 
 void modifyPermissionsMenu(
@@ -225,14 +226,8 @@ void modifyMenu(
         default: { break; }
         }
 
-        bool confirm;
-        Input::readBoolean(
-            confirm,
-            Texts::CONFIRM_MESSAGE
-        );
-
         if (
-            confirm
+            Input::confirm()
         ) {
             targetAccount.setLastModifyDate(
                 {}
@@ -320,14 +315,8 @@ void ownerMenu() {
                     true
                 )
             ) {
-                bool confirm;
-                Input::readBoolean(
-                    confirm,
-                    Texts::CONFIRM_MESSAGE
-                );
-
                 if (
-                    confirm
+                    Input::confirm()
                 )
                     AdminAccount::deleteAccount(
                         targetAccount
@@ -385,8 +374,26 @@ void adminMenu() {
             Lengths::Person::Admin::COUNT_OF_MENU_LINES
         );
 
-        /*switch (static_cast<AdminAccount::AdminMenuChoice>(choice- 1)) {
-        default: { break; }*/
+        Utils::displayMenu(
+            Texts::Person::Admin::LINES[choice - 1],
+            0,
+            {}
+        );
+
+        switch (static_cast<AdminAccount::AdminMenuChoice>(choice - 1)) {
+        case AdminAccount::AdminMenuChoice::CreateNewClient: {
+            ClientAccount::createAccount();
+            break;
+        }
+        case AdminAccount::AdminMenuChoice::ModifyClient: { return; }
+        case AdminAccount::AdminMenuChoice::DeleteClient: { return; }
+        case AdminAccount::AdminMenuChoice::FindClient: { return; }
+        case AdminAccount::AdminMenuChoice::ClientList: { return; }
+        case AdminAccount::AdminMenuChoice::TransactionClient: { return; }
+        case AdminAccount::AdminMenuChoice::ClientEventLog: { return; }
+        case AdminAccount::AdminMenuChoice::Logout: { return; }
+        default: { break; }
+        }
     } while (true);
 }
 

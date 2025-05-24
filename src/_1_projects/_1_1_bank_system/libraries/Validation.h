@@ -136,6 +136,19 @@ public:
         return true;
     }
 
+    static bool areTextCharacters(
+        const string &TEXT
+    ) {
+        for (const char &CHARACTER : TEXT)
+            if (
+                isdigit(
+                    CHARACTER
+                )
+            )
+                return false;
+        return true;
+    }
+
     static bool isEmail(
         const string &EMAIL
     ) {

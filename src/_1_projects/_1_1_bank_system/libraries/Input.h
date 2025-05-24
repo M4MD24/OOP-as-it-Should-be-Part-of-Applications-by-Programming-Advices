@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "Validation.h"
 #include "../constants/Lengths.h"
+#include "../constants/Texts.h"
 #include "../models/accounts/PersonAccount.h"
 
 using namespace std;
@@ -324,7 +325,7 @@ public:
         while (
             !(
                 countryCode.find(
-                    "+"
+                    '+'
                 ) != string::npos &&
                 countryCode.length() >= Limits::MobileNumber::CountryCode::MINIMUM &&
                 countryCode.length() <= Limits::MobileNumber::CountryCode::MAXIMUM
@@ -401,5 +402,64 @@ public:
             )
         );
         return status;
+    }
+
+    static void readPIN_Code(
+        string &pinCode
+    ) {
+        do
+            readText(
+                pinCode,
+                "Enter PIN Code:"
+            );
+        while (
+            pinCode.length() != 4 ||
+            !Validation::areTextNumbers(
+                pinCode
+            )
+        );
+    }
+
+    static bool confirm() {
+        bool status;
+        readBoolean(
+            status,
+            Texts::CONFIRM_MESSAGE
+        );
+        return status;
+    }
+
+    static void readCode(
+        string &code
+    ) {
+        do {
+            readText(
+                code,
+                "Enter Balance Code:"
+            );
+        } while (
+            code.length() != 3 ||
+            !Validation::areTextCharacters(
+                code
+            )
+        );
+    }
+
+    static void readCount(
+        long double &count
+    ) {
+        do {
+            readNumber(
+                count,
+                "Enter Balance Count:"
+            );
+        } while (
+            !(
+                Validation::isNumber() &&
+                Validation::isPositive(
+                    count
+                )
+            )
+        );
     }
 };

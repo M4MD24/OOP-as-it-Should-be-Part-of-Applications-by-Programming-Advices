@@ -1,43 +1,18 @@
 #pragma once
 
-#include <string>
-
 using namespace std;
 
 class Balance {
-    string name;
-    string code;
     long double count;
+    string code;
 
 public:
     Balance(
-        const string &NAME,
-        const string &CODE,
-        const long double COUNT
-    ) {
-        name = NAME;
-        code = CODE;
-        count = COUNT;
-    }
-
-    void setName(
-        const string &NAME
-    ) {
-        name = NAME;
-    }
-
-    string getName() {
-        return name;
-    }
-
-    void setCode(
+        const long double &COUNT,
         const string &CODE
     ) {
+        count = COUNT;
         code = CODE;
-    }
-
-    string getCode() {
-        return code;
     }
 
     void setCount(
@@ -48,5 +23,15 @@ public:
 
     long double getCount() {
         return count;
+    }
+
+    void setCode(
+        const string &CODE
+    ) {
+        code = CODE;
+    }
+
+    string getCode() {
+        return code;
     }
 };

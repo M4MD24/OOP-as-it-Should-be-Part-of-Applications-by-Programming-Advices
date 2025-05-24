@@ -54,6 +54,10 @@ namespace Lengths {
             constexpr short COUNT_OF_FIELDS = 10;
         }
 
-        namespace Client {}
+        namespace Client {
+            constexpr short LINE_LENGTH = 40;
+            constexpr short PIN_CODE = 4;
+            constexpr short COUNT_OF_FIELDS = 10;
+        }
     }
 }

@@ -1,6 +1,7 @@
-#include "models/accounts/admin/AdminAccount.h"
+#include "models/accounts/client/ClientAccount.h"
 
 int main() {
-    // AdminAccount::createAccount();
-    // AdminAccount::showList();
+    // ClientAccount::createAccount();
+
+    ClientAccount::showList();
 }

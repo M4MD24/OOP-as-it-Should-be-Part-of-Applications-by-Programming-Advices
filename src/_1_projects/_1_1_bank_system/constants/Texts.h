@@ -111,7 +111,10 @@ namespace Texts {
             const string LIST_COUNTER_MESSAGE = "Admin Count = ";
         }
 
-        namespace Client {}
+        namespace Client {
+            const string LIST_COUNTER_MESSAGE = "Client Count = ";
+            constexpr char LINE_CHARACTER = '#';
+        }
     }
 
     const string CONFIRM_MESSAGE = "Are you sure?";

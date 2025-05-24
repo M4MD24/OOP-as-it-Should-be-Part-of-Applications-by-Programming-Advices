@@ -8,6 +8,9 @@
             - Validation
         - Login
         - ~~Manage Clients~~
+            - Create New Client
+            - Client List
+            - Logout
         - Manage Admins
             - Create New Admin
             - Modify Admin
