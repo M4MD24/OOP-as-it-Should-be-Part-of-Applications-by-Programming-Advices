@@ -9,6 +9,8 @@
         - Login
         - ~~Manage Clients~~
             - Create New Client
+            - Modify Client
+            - Delete Client
             - Find Client
             - Client List
             - Logout

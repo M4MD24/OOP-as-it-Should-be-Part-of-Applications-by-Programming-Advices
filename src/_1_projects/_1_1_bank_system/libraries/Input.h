@@ -429,22 +429,6 @@ public:
         return status;
     }
 
-    static void readCode(
-        string &code
-    ) {
-        do {
-            readText(
-                code,
-                "Enter Balance Code:"
-            );
-        } while (
-            code.length() != Lengths::Person::Client::BALANCE_CODE ||
-            !Validation::areTextCharacters(
-                code
-            )
-        );
-    }
-
     static void readCount(
         long double &count
     ) {
@@ -459,6 +443,22 @@ public:
                 Validation::isPositive(
                     count
                 )
+            )
+        );
+    }
+
+    static void readCode(
+        string &code
+    ) {
+        do {
+            readText(
+                code,
+                "Enter Balance Code:"
+            );
+        } while (
+            code.length() != Lengths::Person::Client::BALANCE_CODE ||
+            !Validation::areTextCharacters(
+                code
             )
         );
     }

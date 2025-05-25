@@ -15,6 +15,26 @@
 using namespace std;
 
 class ClientAccount : public PersonAccount {
+public:
+    enum ModifyMenuChoice {
+        PIN_Code = 0,
+        FirstName = 1,
+        SecondName = 2,
+        CountryCode = 3,
+        ContactNumber = 4,
+        Email = 5,
+        Balances = 6,
+        BackToManageClientsMenu = 7
+    };
+
+    enum ManageBalancesMenuChoice {
+        CreateBalance = 0,
+        ModifyBalance = 1,
+        DeleteBalance = 2,
+        BackToModifyMenyChoice = 3,
+    };
+
+private:
     string id;
     string pinCode;
     vector<Balance> balances;
@@ -139,7 +159,7 @@ class ClientAccount : public PersonAccount {
     }
 
     static void saveAccountOnFile(
-        ClientAccount &account
+        ClientAccount account
     ) {
         const string RECORD_TEXT = convertRecordToText(
             account
@@ -152,29 +172,6 @@ class ClientAccount : public PersonAccount {
 
         if (file.is_open())
             file << RECORD_TEXT << endl;
-    }
-
-    static void printAccountInformation(
-        ClientAccount &account
-    ) {
-        Utils::displayLine(
-            Texts::Person::Client::LINE_CHARACTER,
-            Lengths::Person::Client::LINE_LENGTH
-        );
-        Utils::displayMenu(
-            "ID: " + account.getID(),
-            {},
-            nullptr
-        );
-        cout << "PIN Code: " << account.getPIN_Code() << endl;
-        cout << "Full Name: " << account.getFullNameText() << endl;
-        cout << "Mobile Number: " << account.getMobileNumberText() << endl;
-        cout << "Email: " << account.getEmail() << endl;
-        cout << "Balance:" << endl;
-        for (Balance &balance : account.getBalances())
-            cout << balance.getCount() << ' ' << balance.getCode() << endl;
-        cout << "Join Date: " << account.getJoinDate().getDateText() << endl;
-        cout << "Lasy Modify Date: " << account.getLastModifyDate().getDateText() << endl;
     }
 
     ClientAccount(): PersonAccount(
@@ -233,6 +230,29 @@ public:
         balances = BALANCES;
     }
 
+    void setAccount(
+        ClientAccount &clientAccount
+    ) {
+        id = clientAccount.id;
+        pinCode = clientAccount.pinCode;
+        setFullName(
+            clientAccount.getFullName()
+        );
+        setMobileNumber(
+            clientAccount.getMobileNumber()
+        );
+        setEmail(
+            clientAccount.getEmail()
+        );
+        balances = clientAccount.balances;
+        setJoinDate(
+            clientAccount.getJoinDate()
+        );
+        setLastModifyDate(
+            clientAccount.getLastModifyDate()
+        );
+    }
+
     void setID() {
         id = Utils::generateKey();
     }
@@ -267,6 +287,81 @@ public:
         return balances;
     }
 
+    static void deleteAccount(
+        ClientAccount &targetAccount
+    ) {
+        const vector<ClientAccount> ACCOUNTS = readAccountsFileToRecords();
+
+        fstream file(
+            FilePaths::CLIENT_ACCOUNTS_FILE_PATH,
+            ios::out | ios::trunc
+        );
+
+        if (file.is_open())
+            for (ClientAccount account : ACCOUNTS)
+                if (account.getID() != targetAccount.getID())
+                    saveAccountOnFile(
+                        account
+                    );
+
+        Utils::displayMessage(
+            "The client account has been deleted."
+        );
+
+        file.close();
+    }
+
+    static void modifyAccount(
+        const ClientAccount &TARGET_ACCOUNT
+    ) {
+        const vector<ClientAccount> ACCOUNTS = readAccountsFileToRecords();
+
+        fstream file {
+            FilePaths::CLIENT_ACCOUNTS_FILE_PATH,
+            ios::out | ios::trunc
+        };
+
+        if (file.is_open())
+            for (const ClientAccount &CURRENT_ACCOUNT : ACCOUNTS)
+                if (TARGET_ACCOUNT.id != CURRENT_ACCOUNT.id)
+                    saveAccountOnFile(
+                        CURRENT_ACCOUNT
+                    );
+                else
+                    saveAccountOnFile(
+                        TARGET_ACCOUNT
+                    );
+
+        Utils::displayMessage(
+            "The client account has been modified."
+        );
+
+        file.close();
+    }
+
+    static void printAccountInformation(
+        ClientAccount &account
+    ) {
+        Utils::displayLine(
+            Texts::Person::Client::LINE_CHARACTER,
+            Lengths::Person::Client::LINE_LENGTH
+        );
+        Utils::displayMenu(
+            "ID: " + account.getID(),
+            {},
+            nullptr
+        );
+        cout << "PIN Code: " << account.getPIN_Code() << endl;
+        cout << "Full Name: " << account.getFullNameText() << endl;
+        cout << "Mobile Number: " << account.getMobileNumberText() << endl;
+        cout << "Email: " << account.getEmail() << endl;
+        cout << "Balance:" << endl;
+        for (Balance &balance : account.getBalances())
+            cout << balance.getCount() << ' ' << balance.getCode() << endl;
+        cout << "Join Date: " << account.getJoinDate().getDateText() << endl;
+        cout << "Lasy Modify Date: " << account.getLastModifyDate().getDateText() << endl;
+    }
+
     static bool isValidAccountByID(
         ClientAccount currentAccount,
         ClientAccount targetAccount,
@@ -287,7 +382,7 @@ public:
         }
         if (PRINT_NOT_FOUND_MESSAGE)
             Utils::displayMessage(
-                "Isn't Found"
+                "Isn't Found!"
             );
         return false;
     }
@@ -302,29 +397,38 @@ public:
         return {};
     }
 
+    static void readBalance(
+        Balance &balance
+    ) {
+        long double count;
+        Input::readCount(
+            count
+        );
+
+        string code;
+        Input::readCode(
+            code
+        );
+
+        balance = {
+            count,
+            code
+        };
+    }
+
     static void readBalances(
         vector<Balance> &balances
     ) {
         bool status = true;
         do {
-            long double count;
-            Input::readCount(
-                count
-            );
-
-            string code;
-            Input::readCode(
-                code
+            Balance balance;
+            readBalance(
+                balance
             );
 
             if (Input::confirm())
                 balances.push_back(
-                    {
-                        count,
-                        String::toUppercaseText(
-                            code
-                        )
-                    }
+                    balance
                 );
 
             Input::readBoolean(

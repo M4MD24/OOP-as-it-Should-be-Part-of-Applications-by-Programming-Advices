@@ -4,9 +4,12 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "../constants/Texts.h"
+#include "../models/accounts/client/Balance.h"
 
+class Balance;
 using namespace std;
 
 class Utils {
@@ -449,6 +452,20 @@ public:
             cout << (index + 1) << " - " << LINES[index] << endl;
     }
 
+    static void displayMenu(
+        const string &TITLE,
+        const short &COUNT_OF_LINES,
+        const vector<Balance> &LINES
+    ) {
+        cout << "~{ " << TITLE << " }~" << endl;
+        for (short index = 0; index < COUNT_OF_LINES; ++index) {
+            Balance balance = LINES[index];
+            cout << (index + 1) << " - " << to_string(
+                balance.getCount()
+            ) << ' ' << balance.getCode() << endl;
+        }
+    }
+
     static void displayMessage(
         const string &MESSAGE
     ) {
@@ -487,5 +504,15 @@ public:
             COUNT,
             CHARACTER
         ) << endl;
+    }
+
+    static void displayBalances(
+        const vector<Balance> &BALANCES
+    ) {
+        displayMenu(
+            Texts::Person::Admin::MODIFY_BALANCES_MENU_TITLE,
+            BALANCES.size(),
+            BALANCES
+        );
     }
 };

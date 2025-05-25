@@ -105,6 +105,8 @@ void modifyPermissionsMenu(
 void modifyMenu(
     AdminAccount targetAccount
 ) {
+    AdminAccount originalAccount = targetAccount;
+
     do {
         AdminAccount::printAccountTable(
             targetAccount
@@ -199,6 +201,17 @@ void modifyMenu(
             break;
         }
 
+        case AdminAccount::ContactNumber: {
+            string contactNumber;
+            Input::readContactNumber(
+                contactNumber
+            );
+            targetAccount.setContactNumber(
+                contactNumber
+            );
+            break;
+        }
+
         case AdminAccount::Email: {
             string email;
             Input::readEmail(
@@ -236,7 +249,14 @@ void modifyMenu(
             AdminAccount::modifyAccount(
                 targetAccount
             );
-        }
+
+            originalAccount.setAccount(
+                targetAccount
+            );
+        } else
+            targetAccount.setAccount(
+                originalAccount
+            );
     } while (true);
 }
 
@@ -359,6 +379,253 @@ void ownerMenu() {
     } while (true);
 }
 
+void modifyBalancesMenu(
+    vector<Balance> &balances
+) {
+    const short COUNT_OF_BALANCES = static_cast<short>(balances.size());
+    do {
+        Utils::displayBalances(
+            balances
+        );
+        Utils::displayMessage(
+            to_string(
+                COUNT_OF_BALANCES + 1
+            ) + " - Back to ~{ " + Texts::Person::Admin::MANAGE_BALANCES_MENU_TITLE + " }~"
+        );
+
+        short choice;
+        Input::readChoice(
+            choice,
+            1,
+            COUNT_OF_BALANCES + 1
+        );
+
+        if (choice == COUNT_OF_BALANCES + 1)
+            return;
+        Balance balance;
+        ClientAccount::readBalance(
+            balance
+        );
+        balances[choice - 1] = balance;
+    } while (true);
+}
+
+void manageBalancesMenu(
+    vector<Balance> &balances
+) {
+    do {
+        Utils::displayBalances(
+            balances
+        );
+
+        Utils::displayMenu(
+            Texts::Person::Admin::MANAGE_BALANCES_MENU_TITLE,
+            Lengths::Person::Admin::COUNT_OF_MANAGE_BALANCES_MENU,
+            Texts::Person::Admin::MANAGE_BALANCES_MENU_LINES
+        );
+
+        short choice;
+        Input::readChoice(
+            choice,
+            1,
+            Lengths::Person::Admin::COUNT_OF_MANAGE_BALANCES_MENU
+        );
+
+        switch (static_cast<ClientAccount::ManageBalancesMenuChoice>(choice - 1)) {
+        case ClientAccount::CreateBalance: {
+            vector<Balance> createdBalances;
+            ClientAccount::readBalances(
+                createdBalances
+            );
+
+            for (Balance &createdBalance : createdBalances) {
+                bool found = false;
+                for (Balance &balance : balances)
+                    if (createdBalance.getCode() == balance.getCode()) {
+                        found = true;
+                        break;
+                    }
+                if (!found)
+                    balances.push_back(
+                        createdBalance
+                    );
+            }
+            break;
+        }
+
+        case ClientAccount::ModifyBalance: {
+            modifyBalancesMenu(
+                balances
+            );
+            break;
+        }
+
+        case ClientAccount::DeleteBalance: {
+            string code;
+            Input::readCode(
+                code
+            );
+
+            bool found = false;
+            short index = 0;
+            while (index < balances.size()) {
+                if (balances[index].getCode() == code) {
+                    found = true;
+                    break;
+                }
+                index++;
+            }
+
+            if (found)
+                balances.erase(
+                    balances.begin() + index
+                );
+            else
+                Utils::displayMessage(
+                    "Isn't Found!"
+                );
+            break;
+        }
+
+        case ClientAccount::BackToModifyMenyChoice: { return; }
+
+        default: { break; }
+        }
+    } while (true);
+}
+
+void modifyMenu(
+    ClientAccount targetAccount
+) {
+    ClientAccount originalAccount = targetAccount;
+
+    do {
+        ClientAccount::printAccountInformation(
+            targetAccount
+        );
+
+        Utils::displayLine(
+            Texts::Person::Client::LINE_CHARACTER,
+            Lengths::Person::Client::LINE_LENGTH
+        );
+
+        Utils::displayMenu(
+            Texts::Person::Admin::MODIFY_MENU_TITLE,
+            Lengths::Person::Admin::COUNT_OF_MODIFY_MENU,
+            Texts::Person::Admin::MODIFY_MENU_LINES
+        );
+
+        short choice;
+        Input::readChoice(
+            choice,
+            1,
+            Lengths::Person::Admin::COUNT_OF_MODIFY_MENU
+        );
+
+        switch (static_cast<ClientAccount::ModifyMenuChoice>(choice - 1)) {
+        case ClientAccount::PIN_Code: {
+            string pinCode;
+            Input::readPIN_Code(
+                pinCode
+            );
+            targetAccount.setPIN_Code(
+                pinCode
+            );
+            break;
+        }
+
+        case ClientAccount::FirstName: {
+            string firstName;
+            Input::readFirstName(
+                firstName
+            );
+            targetAccount.setFirstName(
+                firstName
+            );
+            break;
+        }
+
+        case ClientAccount::SecondName: {
+            string secondName;
+            Input::readSecondName(
+                secondName
+            );
+            targetAccount.setSecondName(
+                secondName
+            );
+            break;
+        }
+
+        case ClientAccount::CountryCode: {
+            string countryCode;
+            Input::readCountryCode(
+                countryCode
+            );
+            targetAccount.setCountryCode(
+                countryCode
+            );
+            break;
+        }
+
+        case ClientAccount::ContactNumber: {
+            string contactNumber;
+            Input::readContactNumber(
+                contactNumber
+            );
+            targetAccount.setContactNumber(
+                contactNumber
+            );
+            break;
+        }
+
+        case ClientAccount::Email: {
+            string email;
+            Input::readEmail(
+                email
+            );
+            targetAccount.setEmail(
+                email
+            );
+            break;
+        }
+
+        case ClientAccount::Balances: {
+            vector<Balance> balances = targetAccount.getBalances();
+            manageBalancesMenu(
+                balances
+            );
+            targetAccount.setBalances(
+                balances
+            );
+            break;
+        }
+
+        case ClientAccount::BackToManageClientsMenu: { return; }
+
+        default: { break; }
+        }
+
+        if (
+            Input::confirm()
+        ) {
+            targetAccount.setLastModifyDate(
+                {}
+            );
+
+            ClientAccount::modifyAccount(
+                targetAccount
+            );
+
+            originalAccount.setAccount(
+                targetAccount
+            );
+        } else
+            targetAccount.setAccount(
+                originalAccount
+            );
+    } while (true);
+}
+
 void adminMenu() {
     short choice;
     do {
@@ -380,44 +647,101 @@ void adminMenu() {
             {}
         );
 
-        switch (static_cast<AdminAccount::AdminMenuChoice>(choice - 1)) {
-        case AdminAccount::AdminMenuChoice::CreateNewClient: {
-            ClientAccount::createAccount();
-            break;
-        }
-        case AdminAccount::AdminMenuChoice::ModifyClient: { return; }
-        case AdminAccount::AdminMenuChoice::DeleteClient: { return; }
-        case AdminAccount::AdminMenuChoice::FindClient: {
-            string id;
-            Input::readID(
-                id
-            );
+        if (choice != Lengths::Person::Admin::COUNT_OF_MENU_LINES)
+            switch (static_cast<AdminAccount::AdminMenuChoice>(choice - 1)) {
+            case AdminAccount::AdminMenuChoice::CreateNewClient: {
+                ClientAccount::createAccount();
+                break;
+            }
+            case AdminAccount::AdminMenuChoice::ModifyClient: {
+                string id;
+                Input::readID(
+                    id
+                );
 
-            ClientAccount currentAccount {
-                id
-            };
+                ClientAccount currentClientAccount {
+                    id
+                };
 
-            const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
-                currentAccount
-            );
+                const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
+                    currentClientAccount
+                );
 
-            ClientAccount::isValidAccountByID(
-                currentAccount,
-                TARGET_ACCOUNT,
-                true,
-                true
-            );
-            break;
-        }
-        case AdminAccount::AdminMenuChoice::ClientList: {
-            ClientAccount::showList();
-            break;
-        }
-        case AdminAccount::AdminMenuChoice::TransactionClient: { return; }
-        case AdminAccount::AdminMenuChoice::ClientEventLog: { return; }
-        case AdminAccount::AdminMenuChoice::Logout: { return; }
-        default: { break; }
-        }
+                if (
+                    ClientAccount::isValidAccountByID(
+                        currentClientAccount,
+                        TARGET_ACCOUNT,
+                        false,
+                        true
+                    )
+                )
+                    modifyMenu(
+                        TARGET_ACCOUNT
+                    );
+                break;
+            }
+            case AdminAccount::AdminMenuChoice::DeleteClient: {
+                string id;
+                Input::readID(
+                    id
+                );
+
+                ClientAccount currentClientAccount {
+                    id
+                };
+
+                ClientAccount targetAccount = ClientAccount::findByID_InFile(
+                    currentClientAccount
+                );
+
+                if (
+                    ClientAccount::isValidAccountByID(
+                        currentClientAccount,
+                        targetAccount,
+                        true,
+                        true
+                    )
+                ) {
+                    if (
+                        Input::confirm()
+                    )
+                        ClientAccount::deleteAccount(
+                            targetAccount
+                        );
+                }
+                break;
+            }
+            case AdminAccount::AdminMenuChoice::FindClient: {
+                string id;
+                Input::readID(
+                    id
+                );
+
+                ClientAccount currentAccount {
+                    id
+                };
+
+                const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
+                    currentAccount
+                );
+
+                ClientAccount::isValidAccountByID(
+                    currentAccount,
+                    TARGET_ACCOUNT,
+                    true,
+                    true
+                );
+                break;
+            }
+            case AdminAccount::AdminMenuChoice::ClientList: {
+                ClientAccount::showList();
+                break;
+            }
+            case AdminAccount::AdminMenuChoice::TransactionClient: { return; }
+            case AdminAccount::AdminMenuChoice::ClientEventLog: { return; }
+            case AdminAccount::AdminMenuChoice::Logout: { return; }
+            default: { break; }
+            }
     } while (true);
 }
 

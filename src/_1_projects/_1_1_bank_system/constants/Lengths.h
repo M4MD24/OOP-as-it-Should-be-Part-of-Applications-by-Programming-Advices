@@ -52,6 +52,11 @@ namespace Lengths {
             }
 
             constexpr short COUNT_OF_FIELDS = 10;
+
+            constexpr short COUNT_OF_MODIFY_MENU = 8;
+
+            constexpr short COUNT_OF_MANAGE_BALANCES_MENU = 4;
+
         }
 
         namespace Client {

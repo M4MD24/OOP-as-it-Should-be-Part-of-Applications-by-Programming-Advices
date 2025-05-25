@@ -398,6 +398,29 @@ public:
         permissions = PERMISSIONS;
     }
 
+    void setAccount(
+        AdminAccount &adminAccount
+    ) {
+        username = adminAccount.username;
+        password = adminAccount.password;
+        setFullName(
+            adminAccount.getFullName()
+        );
+        setMobileNumber(
+            adminAccount.getMobileNumber()
+        );
+        setEmail(
+            adminAccount.getEmail()
+        );
+        permissions = adminAccount.permissions;
+        setJoinDate(
+            adminAccount.getJoinDate()
+        );
+        setLastModifyDate(
+            adminAccount.getLastModifyDate()
+        );
+    }
+
     void setUsername(
         const string &USERNAME
     ) {

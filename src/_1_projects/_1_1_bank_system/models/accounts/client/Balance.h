@@ -7,6 +7,8 @@ class Balance {
     string code;
 
 public:
+    Balance() {}
+
     Balance(
         const long double &COUNT,
         const string &CODE

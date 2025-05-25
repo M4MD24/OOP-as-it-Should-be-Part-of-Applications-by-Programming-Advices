@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include "Lengths.h"
-
 using namespace std;
 
 namespace Texts {
@@ -99,16 +97,39 @@ namespace Texts {
                 const string TRANSACTION = "Transaction";
 
                 namespace Text {
-                    const string CREATE = "Can Create";
-                    const string MODIFY = "Can Modify";
-                    const string DELETE = "Can Delete";
-                    const string SEARCH = "Can Search";
-                    const string SHOW_LIST = "Can Show List";
-                    const string TRANSACTION = "Can Transaction";
+                    const string CREATE = "Can " + Permissions::CREATE;
+                    const string MODIFY = "Can " + Permissions::MODIFY;
+                    const string DELETE = "Can " + Permissions::DELETE;
+                    const string SEARCH = "Can " + Permissions::SEARCH;
+                    const string SHOW_LIST = "Can " + Permissions::SHOW_LIST;
+                    const string TRANSACTION = "Can " + Permissions::TRANSACTION;
                 }
             }
 
             const string LIST_COUNTER_MESSAGE = "Admin Count = ";
+
+            const string MODIFY_MENU_TITLE = "Modify Client Menu";
+            const string MODIFY_MENU_LINES[] = {
+                "PIN Code",
+                "First Name",
+                "Second Name",
+                "Country Code",
+                "Contact Number",
+                "Email",
+                "Balances",
+                "Back to ~{ " + MENU_TITLE + " }~"
+            };
+
+            const string MANAGE_BALANCES_MENU_TITLE = "Manage Balances Menu";
+
+            const string MANAGE_BALANCES_MENU_LINES[] = {
+                "Create Balance",
+                "Modify Balance",
+                "Delete Balance",
+                "Back to ~{ " + LINES[1] + " }~"
+            };
+
+            const string MODIFY_BALANCES_MENU_TITLE = "Modify Balances Menu";
         }
 
         namespace Client {
