@@ -862,4 +862,28 @@ public:
         );
         return false;
     }
+
+    static void displayAdminMenu(
+        const vector<AdminPermission> &PERMISSIONS
+    ) {
+        Utils::displayMenu(
+            Texts::Person::Admin::MENU_TITLE,
+            {},
+            nullptr
+        );
+
+        for (short index = 0; index < Lengths::Person::Admin::COUNT_OF_MENU_LINES - 1; ++index) {
+            bool found = false;
+            for (const AdminPermission &CURRENT_PERMISSION : PERMISSIONS)
+                if (CURRENT_PERMISSION == static_cast<AdminPermission>(index)) {
+                    found = true;
+                    break;
+                }
+            if (!found)
+                cout << "\033[31m";
+            cout << (index + 1) << " - " << Texts::Person::Admin::LINES[index] << "\033[0m" << endl;
+        }
+
+        cout << Lengths::Person::Admin::COUNT_OF_MENU_LINES << " - " << Texts::Person::Admin::LINES[Lengths::Person::Admin::COUNT_OF_MENU_LINES - 1] << endl;
+    }
 };

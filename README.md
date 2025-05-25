@@ -7,7 +7,7 @@
             - Input
             - Validation
         - Login
-        - ~~Manage Clients~~
+        - Manage Clients
             - Create New Client
             - Modify Client
             - Delete Client

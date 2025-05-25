@@ -626,13 +626,13 @@ void modifyMenu(
     } while (true);
 }
 
-void adminMenu() {
+void adminMenu(
+    AdminAccount adminAccount
+) {
     short choice;
     do {
-        Utils::displayMenu(
-            Texts::Person::Admin::MENU_TITLE,
-            Lengths::Person::Admin::COUNT_OF_MENU_LINES,
-            Texts::Person::Admin::LINES
+        AdminAccount::displayAdminMenu(
+            adminAccount.getPermissions()
         );
 
         Input::readChoice(
@@ -641,107 +641,121 @@ void adminMenu() {
             Lengths::Person::Admin::COUNT_OF_MENU_LINES
         );
 
-        Utils::displayMenu(
-            Texts::Person::Admin::LINES[choice - 1],
-            0,
-            {}
-        );
+        if (choice != Lengths::Person::Admin::COUNT_OF_MENU_LINES) {
+            bool found = false;
+            for (const AdminAccount::AdminPermission &PERMISSION : adminAccount.getPermissions())
+                if (PERMISSION == static_cast<AdminAccount::AdminPermission>(choice - 1)) {
+                    found = true;
+                    break;
+                }
 
-        if (choice != Lengths::Person::Admin::COUNT_OF_MENU_LINES)
-            switch (static_cast<AdminAccount::AdminMenuChoice>(choice - 1)) {
-            case AdminAccount::AdminMenuChoice::CreateNewClient: {
-                ClientAccount::createAccount();
-                break;
-            }
-            case AdminAccount::AdminMenuChoice::ModifyClient: {
-                string id;
-                Input::readID(
-                    id
-                );
-
-                ClientAccount currentClientAccount {
-                    id
-                };
-
-                const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
-                    currentClientAccount
-                );
-
-                if (
-                    ClientAccount::isValidAccountByID(
-                        currentClientAccount,
-                        TARGET_ACCOUNT,
-                        false,
-                        true
-                    )
-                )
-                    modifyMenu(
-                        TARGET_ACCOUNT
+            if (found) {
+                if (choice != Lengths::Person::Admin::COUNT_OF_MENU_LINES)
+                    Utils::displayMenu(
+                        Texts::Person::Admin::LINES[choice - 1],
+                        0,
+                        {}
                     );
-                break;
-            }
-            case AdminAccount::AdminMenuChoice::DeleteClient: {
-                string id;
-                Input::readID(
-                    id
-                );
 
-                ClientAccount currentClientAccount {
-                    id
-                };
+                switch (static_cast<AdminAccount::AdminMenuChoice>(choice - 1)) {
+                case AdminAccount::AdminMenuChoice::CreateNewClient: {
+                    ClientAccount::createAccount();
+                    break;
+                }
+                case AdminAccount::AdminMenuChoice::ModifyClient: {
+                    string id;
+                    Input::readID(
+                        id
+                    );
 
-                ClientAccount targetAccount = ClientAccount::findByID_InFile(
-                    currentClientAccount
-                );
+                    ClientAccount currentClientAccount {
+                        id
+                    };
 
-                if (
+                    const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
+                        currentClientAccount
+                    );
+
+                    if (
+                        ClientAccount::isValidAccountByID(
+                            currentClientAccount,
+                            TARGET_ACCOUNT,
+                            false,
+                            true
+                        )
+                    )
+                        modifyMenu(
+                            TARGET_ACCOUNT
+                        );
+                    break;
+                }
+                case AdminAccount::AdminMenuChoice::DeleteClient: {
+                    string id;
+                    Input::readID(
+                        id
+                    );
+
+                    ClientAccount currentClientAccount {
+                        id
+                    };
+
+                    ClientAccount targetAccount = ClientAccount::findByID_InFile(
+                        currentClientAccount
+                    );
+
+                    if (
+                        ClientAccount::isValidAccountByID(
+                            currentClientAccount,
+                            targetAccount,
+                            true,
+                            true
+                        )
+                    ) {
+                        if (
+                            Input::confirm()
+                        )
+                            ClientAccount::deleteAccount(
+                                targetAccount
+                            );
+                    }
+                    break;
+                }
+                case AdminAccount::AdminMenuChoice::FindClient: {
+                    string id;
+                    Input::readID(
+                        id
+                    );
+
+                    ClientAccount currentAccount {
+                        id
+                    };
+
+                    const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
+                        currentAccount
+                    );
+
                     ClientAccount::isValidAccountByID(
-                        currentClientAccount,
-                        targetAccount,
+                        currentAccount,
+                        TARGET_ACCOUNT,
                         true,
                         true
-                    )
-                ) {
-                    if (
-                        Input::confirm()
-                    )
-                        ClientAccount::deleteAccount(
-                            targetAccount
-                        );
+                    );
+                    break;
                 }
-                break;
-            }
-            case AdminAccount::AdminMenuChoice::FindClient: {
-                string id;
-                Input::readID(
-                    id
-                );
-
-                ClientAccount currentAccount {
-                    id
-                };
-
-                const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
-                    currentAccount
-                );
-
-                ClientAccount::isValidAccountByID(
-                    currentAccount,
-                    TARGET_ACCOUNT,
-                    true,
-                    true
-                );
-                break;
-            }
-            case AdminAccount::AdminMenuChoice::ClientList: {
-                ClientAccount::showList();
-                break;
-            }
-            case AdminAccount::AdminMenuChoice::TransactionClient: { return; }
-            case AdminAccount::AdminMenuChoice::ClientEventLog: { return; }
-            case AdminAccount::AdminMenuChoice::Logout: { return; }
-            default: { break; }
-            }
+                case AdminAccount::AdminMenuChoice::ClientList: {
+                    ClientAccount::showList();
+                    break;
+                }
+                case AdminAccount::AdminMenuChoice::TransactionClient: {
+                    break;
+                }
+                case AdminAccount::AdminMenuChoice::ClientEventLog: { return; }
+                default: { break; }
+                }
+            } else
+                cout << "You don't have permission!" << endl;
+        } else
+            return;
     } while (true);
 }
 
@@ -785,52 +799,58 @@ void login(
             username,
             password
         };
+        const AdminAccount TARGET_ADMIN_ACCOUNT = AdminAccount::findByUsernameInFile(
+            currentAdminAccount
+        );
         if (
             AdminAccount::isValidAccountByUsernameAndPassword(
                 currentAdminAccount,
-                AdminAccount::findByUsernameInFile(
-                    currentAdminAccount
-                )
+                TARGET_ADMIN_ACCOUNT
             )
         )
-            adminMenu();
+            adminMenu(
+                TARGET_ADMIN_ACCOUNT
+            );
         break;
     }
     default: { break; }
     }
 }
 
-void performAccountTypeLoginMenu() {
-    short choice;
+void performAccountTypeLoginMenu(
+    short attempt = 1
+) {
+    while (attempt < 4) {
+        short choice;
 
-    Utils::displayMenu(
-        Texts::Login::LOGIN_CHOICES_MENU_TITLE,
-        Lengths::Login::COUNT_OF_MENU_LINES,
-        Texts::Login::LINES
-    );
-
-    Input::readChoice(
-        choice
-    );
-
-    if (
-        Validation::isBetweenNumbers(
-            choice,
-            static_cast<short>(1),
-            Lengths::Login::COUNT_OF_MENU_LINES
-        )
-    )
-        login(
-            static_cast<AccountType>(
-                choice - 1
-            )
+        Utils::displayMenu(
+            Texts::Login::LOGIN_CHOICES_MENU_TITLE,
+            Lengths::Login::COUNT_OF_MENU_LINES,
+            Texts::Login::LINES
         );
+
+        Input::readChoice(
+            choice
+        );
+
+        if (
+            Validation::isBetweenNumbers(
+                choice,
+                static_cast<short>(1),
+                Lengths::Login::COUNT_OF_MENU_LINES
+            )
+        ) {
+            login(
+                static_cast<AccountType>(
+                    choice - 1
+                )
+            );
+            attempt++;
+        }
+    }
 }
 
-void startProgram() {
-    while (true)
-        performAccountTypeLoginMenu();
-}
+void startProgram() { performAccountTypeLoginMenu(); }
 
 int main() {
     Utils::activeRandom();
