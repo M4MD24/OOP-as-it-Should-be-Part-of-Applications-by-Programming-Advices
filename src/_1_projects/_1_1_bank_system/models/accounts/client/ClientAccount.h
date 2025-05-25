@@ -287,6 +287,32 @@ public:
         return balances;
     }
 
+    static void displayTotalBalances() {
+        vector<Balance> totalBalances;
+        for (ClientAccount &clientAccount : readAccountsFileToRecords()) {
+            for (Balance &clientBalance : clientAccount.getBalances()) {
+                bool found = false;
+                for (Balance &targetBalance : totalBalances) {
+                    if (clientBalance.getCode() == targetBalance.getCode()) {
+                        found = true;
+                        targetBalance.setCount(
+                            targetBalance.getCount() +
+                            clientBalance.getCount()
+                        );
+                        break;
+                    }
+                }
+                if (!found)
+                    totalBalances.push_back(
+                        clientBalance
+                    );
+            }
+        }
+
+        for (Balance &totalBalance : totalBalances)
+            cout << totalBalance.getCount() << ' ' << totalBalance.getCode() << endl;
+    }
+
     static void deleteAccount(
         ClientAccount &targetAccount
     ) {

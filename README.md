@@ -20,4 +20,5 @@
             - Delete Admin
             - Find Admin
             - Admin List
+            - Total Balances
             - Logout

@@ -275,107 +275,110 @@ void ownerMenu() {
             Lengths::Person::Owner::COUNT_OF_MENU_LINES
         );
 
-        Utils::displayMenu(
-            Texts::Person::Owner::LINES[choice - 1],
-            0,
-            {}
-        );
-
-        switch (static_cast<OwnerAccount::OwnerMenuChoice>(choice - 1)) {
-        case OwnerAccount::OwnerMenuChoice::CreateNewAdmin: {
-            AdminAccount::createAccount();
-            break;
-        }
-        case OwnerAccount::OwnerMenuChoice::ModifyAdmin: {
-            string username;
-            Input::readUsername(
-                username
+        if (choice != Lengths::Person::Owner::COUNT_OF_MENU_LINES) {
+            Utils::displayMenu(
+                Texts::Person::Owner::LINES[choice - 1],
+                0,
+                {}
             );
 
-            AdminAccount currentAdminAccount {
-                username
-            };
-
-            const AdminAccount TARGET_ACCOUNT = AdminAccount::findByUsernameInFile(
-                currentAdminAccount
-            );
-
-            if (
-                AdminAccount::isValidAccountByUsername(
-                    currentAdminAccount,
-                    TARGET_ACCOUNT,
-                    false,
-                    true
-                )
-            )
-                modifyMenu(
-                    TARGET_ACCOUNT
+            switch (static_cast<OwnerAccount::OwnerMenuChoice>(choice - 1)) {
+            case OwnerAccount::OwnerMenuChoice::CreateNewAdmin: {
+                AdminAccount::createAccount();
+                break;
+            }
+            case OwnerAccount::OwnerMenuChoice::ModifyAdmin: {
+                string username;
+                Input::readUsername(
+                    username
                 );
-            break;
-        }
-        case OwnerAccount::OwnerMenuChoice::DeleteAdmin: {
-            string username;
-            Input::readUsername(
-                username
-            );
 
-            AdminAccount currentAdminAccount {
-                username
-            };
+                AdminAccount currentAdminAccount {
+                    username
+                };
 
-            AdminAccount targetAccount = AdminAccount::findByUsernameInFile(
-                currentAdminAccount
-            );
+                const AdminAccount TARGET_ACCOUNT = AdminAccount::findByUsernameInFile(
+                    currentAdminAccount
+                );
 
-            if (
+                if (
+                    AdminAccount::isValidAccountByUsername(
+                        currentAdminAccount,
+                        TARGET_ACCOUNT,
+                        false,
+                        true
+                    )
+                )
+                    modifyMenu(
+                        TARGET_ACCOUNT
+                    );
+                break;
+            }
+            case OwnerAccount::OwnerMenuChoice::DeleteAdmin: {
+                string username;
+                Input::readUsername(
+                    username
+                );
+
+                AdminAccount currentAdminAccount {
+                    username
+                };
+
+                AdminAccount targetAccount = AdminAccount::findByUsernameInFile(
+                    currentAdminAccount
+                );
+
+                if (
+                    AdminAccount::isValidAccountByUsername(
+                        currentAdminAccount,
+                        targetAccount,
+                        true,
+                        true
+                    )
+                ) {
+                    if (
+                        Input::confirm()
+                    )
+                        AdminAccount::deleteAccount(
+                            targetAccount
+                        );
+                }
+                break;
+            }
+            case OwnerAccount::OwnerMenuChoice::FindAdmin: {
+                string username;
+                Input::readUsername(
+                    username
+                );
+
+                AdminAccount currentAccount {
+                    username
+                };
+
+                const AdminAccount TARGET_ACCOUNT = AdminAccount::findByUsernameInFile(
+                    currentAccount
+                );
+
                 AdminAccount::isValidAccountByUsername(
-                    currentAdminAccount,
-                    targetAccount,
+                    currentAccount,
+                    TARGET_ACCOUNT,
                     true,
                     true
-                )
-            ) {
-                if (
-                    Input::confirm()
-                )
-                    AdminAccount::deleteAccount(
-                        targetAccount
-                    );
+                );
+                break;
             }
-            break;
-        }
-        case OwnerAccount::OwnerMenuChoice::FindAdmin: {
-            string username;
-            Input::readUsername(
-                username
-            );
-
-            AdminAccount currentAccount {
-                username
-            };
-
-            const AdminAccount TARGET_ACCOUNT = AdminAccount::findByUsernameInFile(
-                currentAccount
-            );
-
-            AdminAccount::isValidAccountByUsername(
-                currentAccount,
-                TARGET_ACCOUNT,
-                true,
-                true
-            );
-            break;
-        }
-        case OwnerAccount::OwnerMenuChoice::AdminList: {
-            AdminAccount::showList();
-            break;
-        }
-        case OwnerAccount::OwnerMenuChoice::TotalBalances: {
-            break;
-        }
-        case OwnerAccount::OwnerMenuChoice::Logout: { return; }
-        default: { break; }
-        }
+            case OwnerAccount::OwnerMenuChoice::AdminList: {
+                AdminAccount::showList();
+                break;
+            }
+            case OwnerAccount::OwnerMenuChoice::TotalBalances: {
+                ClientAccount::displayTotalBalances();
+                break;
+            }
+            default: { break; }
+            }
+        } else
+            return;
     } while (true);
 }
 
