@@ -13,6 +13,11 @@
             - Delete Client
             - Find Client
             - Client List
+            - Transaction Client
+                - Deposit
+                - Withdraw
+                - Transfer
+                - Conversion
             - Logout
         - Manage Admins
             - Create New Admin

@@ -387,9 +387,16 @@ void modifyBalancesMenu(
 ) {
     const short COUNT_OF_BALANCES = static_cast<short>(balances.size());
     do {
+        Utils::displayMenu(
+            Texts::Person::Admin::MODIFY_BALANCES_MENU_TITLE,
+            0,
+            {}
+        );
+
         Utils::displayBalances(
             balances
         );
+
         Utils::displayMessage(
             to_string(
                 COUNT_OF_BALANCES + 1
@@ -400,7 +407,7 @@ void modifyBalancesMenu(
         Input::readChoice(
             choice,
             1,
-            COUNT_OF_BALANCES + 1
+            static_cast<short>(COUNT_OF_BALANCES + 1)
         );
 
         if (choice == COUNT_OF_BALANCES + 1)
@@ -485,7 +492,7 @@ void manageBalancesMenu(
                 );
             else
                 Utils::displayMessage(
-                    "Isn't Found!"
+                    "Isn't Found."
                 );
             break;
         }
@@ -603,7 +610,7 @@ void modifyMenu(
             break;
         }
 
-        case ClientAccount::BackToManageClientsMenu: { return; }
+        case ClientAccount::BackToManageClientsMenuFromModifyMenu: { return; }
 
         default: { break; }
         }
@@ -616,7 +623,8 @@ void modifyMenu(
             );
 
             ClientAccount::modifyAccount(
-                targetAccount
+                targetAccount,
+                true
             );
 
             originalAccount.setAccount(
@@ -626,6 +634,362 @@ void modifyMenu(
             targetAccount.setAccount(
                 originalAccount
             );
+    } while (true);
+}
+
+void transactionMenu(
+    ClientAccount &currentAccount
+) {
+    ClientAccount originalAccount = currentAccount;
+    short choice;
+    do {
+        Utils::displayBalances(
+            currentAccount.getBalances()
+        );
+
+        Utils::displayMenu(
+            Texts::Person::Admin::TRANSACTION_MENU_TITLE,
+            Lengths::Person::Admin::COUNT_OF_TRANSACTION_MENU,
+            Texts::Person::Admin::TRANSACTION_MENU
+        );
+
+        Input::readChoice(
+            choice,
+            1,
+            Lengths::Person::Admin::COUNT_OF_TRANSACTION_MENU
+        );
+
+        bool found = false;
+        short index = 0;
+        vector<Balance> balances = currentAccount.getBalances();
+        Balance targetBalance;
+
+        switch (static_cast<ClientAccount::TransactionMenuChoice>(choice - 1)) {
+        case ClientAccount::Deposit: {
+            Balance depositedBalance;
+            ClientAccount::readBalance(
+                depositedBalance
+            );
+
+            string code = depositedBalance.getCode();
+            depositedBalance.setCode(
+                String::toUppercaseText(
+                    code
+                )
+            );
+
+            while (index < currentAccount.getBalances().size()) {
+                targetBalance = balances[index];
+                if (targetBalance.getCode() == depositedBalance.getCode()) {
+                    found = true;
+                    break;
+                }
+                index++;
+            }
+
+            if (found)
+                balances[index].setCount(
+                    targetBalance.getCount() +
+                    depositedBalance.getCount()
+                );
+            else
+                balances.push_back(
+                    targetBalance
+                );
+            currentAccount.setBalances(
+                balances
+            );
+
+            if (
+                Input::confirm()
+            ) {
+                currentAccount.setLastModifyDate(
+                    {}
+                );
+
+                ClientAccount::modifyAccount(
+                    currentAccount,
+                    true
+                );
+
+                originalAccount.setAccount(
+                    currentAccount
+                );
+            } else
+                currentAccount.setAccount(
+                    originalAccount
+                );
+
+            break;
+        }
+        case ClientAccount::Withdraw: {
+            Balance withdrawnBalance;
+            ClientAccount::readBalance(
+                withdrawnBalance
+            );
+
+            string code = withdrawnBalance.getCode();
+            withdrawnBalance.setCode(
+                String::toUppercaseText(
+                    code
+                )
+            );
+
+            while (index < currentAccount.getBalances().size()) {
+                targetBalance = balances[index];
+                if (targetBalance.getCode() == withdrawnBalance.getCode()) {
+                    found = true;
+                    break;
+                }
+                index++;
+            }
+
+            if (found)
+                if (withdrawnBalance.getCount() <= targetBalance.getCount()) {
+                    balances[index].setCount(
+                        targetBalance.getCount() -
+                        withdrawnBalance.getCount()
+                    );
+                    currentAccount.setBalances(
+                        balances
+                    );
+
+                    if (
+                        Input::confirm()
+                    ) {
+                        currentAccount.setLastModifyDate(
+                            {}
+                        );
+
+                        ClientAccount::modifyAccount(
+                            currentAccount,
+                            true
+                        );
+
+                        originalAccount.setAccount(
+                            currentAccount
+                        );
+                    } else
+                        currentAccount.setAccount(
+                            originalAccount
+                        );
+                } else
+                    cout << "The balance is not sufficient to withdraw the required amount." << endl;
+
+            break;
+        }
+        case ClientAccount::Transfer: {
+            string id;
+            Input::readID(
+                id
+            );
+
+            ClientAccount anotherAccount {
+                id
+            };
+
+            ClientAccount targetAnotherAccount = ClientAccount::findByID_InFile(
+                anotherAccount
+            );
+
+            if (
+                ClientAccount::isValidAccountByID(
+                    anotherAccount,
+                    targetAnotherAccount,
+                    false,
+                    true
+                )
+            ) {
+                Balance withdrawnBalanceFromCurrentAccount;
+                ClientAccount::readBalance(
+                    withdrawnBalanceFromCurrentAccount
+                );
+
+                string code = withdrawnBalanceFromCurrentAccount.getCode();
+                withdrawnBalanceFromCurrentAccount.setCode(
+                    String::toUppercaseText(
+                        code
+                    )
+                );
+
+                while (index < currentAccount.getBalances().size()) {
+                    targetBalance = balances[index];
+                    if (targetBalance.getCode() == withdrawnBalanceFromCurrentAccount.getCode()) {
+                        found = true;
+                        break;
+                    }
+                    index++;
+                }
+
+                if (found)
+                    if (withdrawnBalanceFromCurrentAccount.getCount() <= targetBalance.getCount()) {
+                        balances[index].setCount(
+                            targetBalance.getCount() -
+                            withdrawnBalanceFromCurrentAccount.getCount()
+                        );
+                        currentAccount.setBalances(
+                            balances
+                        );
+
+                        found = false;
+                        index = 0;
+                        balances = targetAnotherAccount.getBalances();
+                        targetBalance = {};
+
+                        while (index < targetAnotherAccount.getBalances().size()) {
+                            targetBalance = balances[index];
+                            if (targetBalance.getCode() == withdrawnBalanceFromCurrentAccount.getCode()) {
+                                found = true;
+                                break;
+                            }
+                            index++;
+                        }
+
+                        if (found) {
+                            balances[index].setCount(
+                                targetBalance.getCount() +
+                                withdrawnBalanceFromCurrentAccount.getCount()
+                            );
+                            balances.push_back(
+                                targetBalance
+                            );
+                        } else
+                            balances.push_back(
+                                withdrawnBalanceFromCurrentAccount
+                            );
+
+                        targetAnotherAccount.setBalances(
+                            balances
+                        );
+
+                        if (
+                            Input::confirm()
+                        ) {
+                            currentAccount.setLastModifyDate(
+                                {}
+                            );
+
+                            ClientAccount::modifyAccount(
+                                currentAccount,
+                                true
+                            );
+
+                            targetAnotherAccount.setLastModifyDate(
+                                {}
+                            );
+
+                            ClientAccount::modifyAccount(
+                                targetAnotherAccount,
+                                false
+                            );
+
+                            originalAccount.setAccount(
+                                currentAccount
+                            );
+                        } else
+                            currentAccount.setAccount(
+                                originalAccount
+                            );
+                    } else
+                        cout << "The balance is not sufficient to withdraw the required amount." << endl;
+            }
+            break;
+        }
+        case ClientAccount::Conversion: {
+            Balance convertedBalance;
+            ClientAccount::readBalance(
+                convertedBalance
+            );
+
+            string code = convertedBalance.getCode();
+            convertedBalance.setCode(
+                String::toUppercaseText(
+                    code
+                )
+            );
+
+            while (index < currentAccount.getBalances().size()) {
+                targetBalance = balances[index];
+                if (targetBalance.getCode() == convertedBalance.getCode()) {
+                    found = true;
+                    break;
+                }
+                index++;
+            }
+
+            if (found)
+                if (convertedBalance.getCount() <= targetBalance.getCount()) {
+                    balances[index].setCount(
+                        targetBalance.getCount() -
+                        convertedBalance.getCount()
+                    );
+                    currentAccount.setBalances(
+                        balances
+                    );
+
+                    found = false;
+                    index = 0;
+                    targetBalance = {};
+                    Input::readCode(
+                        code
+                    );
+                    String::toUppercaseText(
+                        code
+                    );
+
+                    while (index < currentAccount.getBalances().size()) {
+                        targetBalance = balances[index];
+                        if (targetBalance.getCode() == code) {
+                            found = true;
+                            break;
+                        }
+                        index++;
+                    }
+
+                    if (found)
+                        balances[index].setCount(
+                            targetBalance.getCount() +
+                            convertedBalance.getCount()
+                        );
+                    else {
+                        convertedBalance.setCode(
+                            code
+                        );
+                        balances.push_back(
+                            convertedBalance
+                        );
+                    }
+
+                    currentAccount.setBalances(
+                        balances
+                    );
+
+                    if (
+                        Input::confirm()
+                    ) {
+                        currentAccount.setLastModifyDate(
+                            {}
+                        );
+
+                        ClientAccount::modifyAccount(
+                            currentAccount,
+                            true
+                        );
+
+                        originalAccount.setAccount(
+                            currentAccount
+                        );
+                    } else
+                        currentAccount.setAccount(
+                            originalAccount
+                        );
+                } else
+                    cout << "The balance is not sufficient to withdraw the required amount." << endl;
+            break;
+        }
+        case ClientAccount::BackToManageClientsMenuFromTransactionMenu: { return; }
+        default: { break; }
+        }
     } while (true);
 }
 
@@ -750,20 +1114,45 @@ void adminMenu(
                     break;
                 }
                 case AdminAccount::AdminMenuChoice::TransactionClient: {
+                    string id;
+                    Input::readID(
+                        id
+                    );
+
+                    ClientAccount currentAccount {
+                        id
+                    };
+
+                    ClientAccount targetAccount = ClientAccount::findByID_InFile(
+                        currentAccount
+                    );
+
+                    if (
+                        ClientAccount::isValidAccountByID(
+                            currentAccount,
+                            targetAccount,
+                            true,
+                            true
+                        )
+                    )
+                        transactionMenu(
+                            targetAccount
+                        );
                     break;
                 }
                 case AdminAccount::AdminMenuChoice::ClientEventLog: { return; }
                 default: { break; }
                 }
             } else
-                cout << "You don't have permission!" << endl;
+                cout << "You don't have permission." << endl;
         } else
             return;
     } while (true);
 }
 
 void login(
-    const AccountType &ACCOUNT_TYPE
+    const AccountType &ACCOUNT_TYPE,
+    short &attempt
 ) {
     Utils::displayMenu(
         Texts::Login::LOGIN_MENU_TITLE,
@@ -793,8 +1182,10 @@ void login(
                     currentOwnerAccount
                 )
             )
-        )
+        ) {
             ownerMenu();
+            attempt = 1;
+        }
         break;
     }
     case Admin: {
@@ -810,14 +1201,18 @@ void login(
                 currentAdminAccount,
                 TARGET_ADMIN_ACCOUNT
             )
-        )
+        ) {
             adminMenu(
                 TARGET_ADMIN_ACCOUNT
             );
+            attempt = 1;
+        }
         break;
     }
     default: { break; }
     }
+
+    attempt++;
 }
 
 void performAccountTypeLoginMenu(
@@ -842,14 +1237,13 @@ void performAccountTypeLoginMenu(
                 static_cast<short>(1),
                 Lengths::Login::COUNT_OF_MENU_LINES
             )
-        ) {
+        )
             login(
                 static_cast<AccountType>(
                     choice - 1
-                )
+                ),
+                attempt
             );
-            attempt++;
-        }
     }
 }
 

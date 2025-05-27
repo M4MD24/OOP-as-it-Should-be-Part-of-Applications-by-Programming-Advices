@@ -24,7 +24,7 @@ public:
         ContactNumber = 4,
         Email = 5,
         Balances = 6,
-        BackToManageClientsMenu = 7
+        BackToManageClientsMenuFromModifyMenu = 7
     };
 
     enum ManageBalancesMenuChoice {
@@ -32,6 +32,14 @@ public:
         ModifyBalance = 1,
         DeleteBalance = 2,
         BackToModifyMenyChoice = 3,
+    };
+
+    enum TransactionMenuChoice {
+        Deposit = 0,
+        Withdraw = 1,
+        Transfer = 2,
+        Conversion = 3,
+        BackToManageClientsMenuFromTransactionMenu = 4
     };
 
 private:
@@ -338,7 +346,8 @@ public:
     }
 
     static void modifyAccount(
-        const ClientAccount &TARGET_ACCOUNT
+        const ClientAccount &TARGET_ACCOUNT,
+        const bool &PRINT_COMPLETION_STATUS
     ) {
         const vector<ClientAccount> ACCOUNTS = readAccountsFileToRecords();
 
@@ -358,9 +367,10 @@ public:
                         TARGET_ACCOUNT
                     );
 
-        Utils::displayMessage(
-            "The client account has been modified."
-        );
+        if (PRINT_COMPLETION_STATUS)
+            Utils::displayMessage(
+                "The client account has been modified."
+            );
 
         file.close();
     }
@@ -408,7 +418,7 @@ public:
         }
         if (PRINT_NOT_FOUND_MESSAGE)
             Utils::displayMessage(
-                "Isn't Found!"
+                "Isn't Found."
             );
         return false;
     }

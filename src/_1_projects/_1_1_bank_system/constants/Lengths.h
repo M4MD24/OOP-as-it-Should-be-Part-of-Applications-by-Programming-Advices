@@ -57,6 +57,7 @@ namespace Lengths {
 
             constexpr short COUNT_OF_MANAGE_BALANCES_MENU = 4;
 
+            constexpr short COUNT_OF_TRANSACTION_MENU = 5;
         }
 
         namespace Client {

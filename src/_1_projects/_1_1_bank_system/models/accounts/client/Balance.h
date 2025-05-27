@@ -36,4 +36,8 @@ public:
     string getCode() {
         return code;
     }
+
+    void deposit() {
+
+    }
 };

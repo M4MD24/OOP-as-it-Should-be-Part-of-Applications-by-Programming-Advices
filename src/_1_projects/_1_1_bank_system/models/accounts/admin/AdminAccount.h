@@ -840,7 +840,7 @@ public:
         }
         if (PRINT_NOT_FOUND_MESSAGE)
             Utils::displayMessage(
-                "Isn't Found!"
+                "Isn't Found."
             );
         return false;
     }

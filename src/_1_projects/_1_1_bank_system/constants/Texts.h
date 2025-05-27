@@ -130,6 +130,16 @@ namespace Texts {
             };
 
             const string MODIFY_BALANCES_MENU_TITLE = "Modify Balances Menu";
+
+            const string TRANSACTION_MENU_TITLE = "Transaction Menu";
+
+            const string TRANSACTION_MENU[] = {
+                "Deposit",
+                "Withdraw",
+                "Transfer",
+                "Conversion",
+                "Back to ~{ " + MENU_TITLE + " }~"
+            };
         }
 
         namespace Client {

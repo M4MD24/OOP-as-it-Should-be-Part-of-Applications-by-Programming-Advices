@@ -466,6 +466,18 @@ public:
         }
     }
 
+    static void displayMenu(
+        const short &COUNT_OF_LINES,
+        const vector<Balance> &LINES
+    ) {
+        for (short index = 0; index < COUNT_OF_LINES; ++index) {
+            Balance balance = LINES[index];
+            cout << (index + 1) << " - " << to_string(
+                balance.getCount()
+            ) << ' ' << balance.getCode() << endl;
+        }
+    }
+
     static void displayMessage(
         const string &MESSAGE
     ) {
@@ -510,7 +522,7 @@ public:
         const vector<Balance> &BALANCES
     ) {
         displayMenu(
-            Texts::Person::Admin::MODIFY_BALANCES_MENU_TITLE,
+            Texts::Person::Admin::MODIFY_MENU_LINES[6],
             BALANCES.size(),
             BALANCES
         );
