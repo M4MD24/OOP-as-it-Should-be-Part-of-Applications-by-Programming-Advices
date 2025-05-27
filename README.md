@@ -1,29 +1,36 @@
 # OOP as it Should be Part of Applications
 
-1. Projects
-    1. Bank System
-        - Libraries
-            - Utils
-            - Input
-            - Validation
-        - Login
-        - Manage Clients
-            - Create New Client
-            - Modify Client
-            - Delete Client
-            - Find Client
-            - Client List
-            - Transaction Client
-                - Deposit
-                - Withdraw
-                - Transfer
-                - Conversion
-            - Logout
-        - Manage Admins
-            - Create New Admin
-            - Modify Admin
-            - Delete Admin
-            - Find Admin
-            - Admin List
-            - Total Balances
-            - Logout
+- Libraries
+    - Utils
+    - Input
+    - Validation
+- Login
+  - Owner
+  - Admin
+- Manage Clients
+    - Create New Client
+    - Modify Client
+    - Delete Client
+    - Find Client
+    - Client List
+    - Transaction Client
+        - Deposit
+        - Withdraw
+        - Transfer
+        - Conversion
+    - ~~Client Event Log~~
+        - ~~General~~
+        - ~~Transfer~~
+        - ~~Specific Client~~
+    - Logout
+- Manage Admins
+    - Create New Admin
+    - Modify Admin
+    - Delete Admin
+    - Find Admin
+    - Admin List
+    - Total Balances
+    - ~~Admin Login Log~~
+        - ~~General~~
+        - ~~Specific Admin~~
+    - Logout
