@@ -1,11 +1,17 @@
 #pragma once
 
-#include "../../libraries/date/Date.h"
+#include "../../libraries/datetime/Date.h"
 
 using namespace std;
 
 class PersonAccount {
 public:
+    enum AccountType {
+        Owner = 0,
+        Admin = 1,
+        Client = 2
+    };
+
     struct MobileNumber {
         string countryCode;
         string contactNumber;

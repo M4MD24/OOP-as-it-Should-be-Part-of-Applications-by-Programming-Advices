@@ -8,7 +8,8 @@
 #include "../../../constants/Lengths.h"
 #include "../../../constants/Texts.h"
 #include "../../../libraries/Input.h"
-#include "../../../libraries/date/Date.h"
+#include "../../../libraries/datetime/Date.h"
+#include "../../../libraries/datetime/Time.h"
 #include "../../../libraries/String.h"
 #include "../../../libraries/Utils.h"
 
@@ -135,7 +136,7 @@ private:
         }
     }
 
-    static void printBody(
+    static void printAccountBody(
         AdminAccount &adminAccount
     ) {
         cout << '|';
@@ -215,14 +216,14 @@ private:
 
         Utils::displayLine(
             Texts::Person::Admin::LINE_CHARACTER,
-            Lengths::Person::Admin::LINE_LENGTH
+            Lengths::Person::Admin::ACCOUNT_LINE_LENGTH
         );
     }
 
-    static void printHeader() {
+    static void printAccountHeader() {
         Utils::displayLine(
             Texts::Person::Admin::LINE_CHARACTER,
-            Lengths::Person::Admin::LINE_LENGTH
+            Lengths::Person::Admin::ACCOUNT_LINE_LENGTH
         );
 
         cout << '|';
@@ -291,7 +292,7 @@ private:
 
         Utils::displayLine(
             Texts::Person::Admin::LINE_CHARACTER,
-            Lengths::Person::Admin::LINE_LENGTH
+            Lengths::Person::Admin::ACCOUNT_LINE_LENGTH
         );
     }
 
@@ -340,6 +341,30 @@ private:
 
         if (file.is_open())
             file << RECORD_TEXT << endl;
+    }
+
+    static string convertRecordToSessionText(
+        AdminAccount &account
+    ) {
+        return account.getUsername() + Delimiters::ACCOUNT_FIELDS +
+            account.getPassword() + Delimiters::ACCOUNT_FIELDS +
+            (Date().getDateText() + ' ' + Time().getTimeText());
+    }
+
+    static void saveSessionOnFile(
+        AdminAccount &account
+    ) {
+        const string SESSION_TEXT = convertRecordToSessionText(
+            account
+        );
+
+        fstream file {
+            FilePaths::ADMIN_LOGIN_LOG_FILE_PATH,
+            ios::out | ios::app
+        };
+
+        if (file.is_open())
+            file << SESSION_TEXT << endl;
     }
 
     AdminAccount(): PersonAccount(
@@ -449,6 +474,115 @@ public:
 
     vector<AdminPermission> getPermissions() {
         return permissions;
+    }
+
+    static void createSession(
+        AdminAccount &account
+    ) {
+        saveSessionOnFile(
+            account
+        );
+    }
+
+    static void printLoginLogHeader() {
+        Utils::displayLine(
+            Texts::Person::Admin::LINE_CHARACTER,
+            Lengths::Person::Admin::LOGIN_LOG_LINE_LENGTH
+        );
+
+        cout << '|';
+
+        Utils::displayMessage(
+            Texts::Person::Admin::USERNAME,
+            Lengths::Person::Admin::USERNAME
+        );
+
+        Utils::displayMessage(
+            Texts::Person::Admin::PASSWORD,
+            Lengths::Person::Admin::PASSWORD
+        );
+
+        Utils::displayMessage(
+            Texts::Person::Admin::LOGIN_DATE_TIME,
+            Lengths::Person::Admin::LOGIN_DATE_TIME
+        );
+
+        cout << endl;
+
+        Utils::displayLine(
+            Texts::Person::Admin::LINE_CHARACTER,
+            Lengths::Person::Admin::LOGIN_LOG_LINE_LENGTH
+        );
+    }
+
+    static void printLoginLogBody(
+        const vector<string> &FIELDS
+    ) {
+        cout << '|';
+
+        Utils::displayMessage(
+            FIELDS[0],
+            Lengths::Person::Admin::USERNAME
+        );
+
+        Utils::displayMessage(
+            FIELDS[1],
+            Lengths::Person::Admin::PASSWORD
+        );
+
+        Utils::displayMessage(
+            FIELDS[2],
+            Lengths::Person::Admin::LOGIN_DATE_TIME
+        );
+
+        cout << endl;
+
+        Utils::displayLine(
+            Texts::Person::Admin::LINE_CHARACTER,
+            Lengths::Person::Admin::LOGIN_LOG_LINE_LENGTH
+        );
+    }
+
+    static void showLoginLog() {
+        printLoginLogHeader();
+        fstream file {
+            FilePaths::ADMIN_LOGIN_LOG_FILE_PATH,
+            ios::in
+        };
+
+        if (file.is_open()) {
+            string line;
+            size_t counter = 0;
+            while (
+                getline(
+                    file,
+                    line
+                )
+            ) {
+                counter++;
+
+                vector<string> fields;
+
+                String::splitText(
+                    line,
+                    fields,
+                    Delimiters::ACCOUNT_FIELDS
+                );
+
+                if (fields.size() == 3)
+                    printLoginLogBody(
+                        fields
+                    );
+            }
+
+            Utils::displayNote(
+                Texts::Person::Admin::LOGIN_LOG_COUNTER_MESSAGE + to_string(
+                    counter
+                )
+            );
+        }
+
+        file.close();
     }
 
     static void deleteAccount(
@@ -748,7 +882,7 @@ public:
     }
 
     static void showList() {
-        printHeader();
+        printAccountHeader();
 
         fstream file {
             FilePaths::ADMIN_ACCOUNTS_FILE_PATH,
@@ -780,13 +914,13 @@ public:
                     fields
                 );
 
-                printBody(
+                printAccountBody(
                     account
                 );
             }
 
             Utils::displayNote(
-                Texts::Person::Admin::LIST_COUNTER_MESSAGE + to_string(
+                Texts::Person::Admin::ACCOUNT_COUNTER_MESSAGE + to_string(
                     counter
                 )
             );
@@ -819,8 +953,8 @@ public:
     static void printAccountTable(
         AdminAccount &adminAccount
     ) {
-        printHeader();
-        printBody(
+        printAccountHeader();
+        printAccountBody(
             adminAccount
         );
     }

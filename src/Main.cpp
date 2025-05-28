@@ -1,5 +1,4 @@
 #include "constants/Texts.h"
-#include "libraries/Options.h"
 #include "libraries/Input.h"
 #include "libraries/Utils.h"
 #include "libraries/Validation.h"
@@ -373,6 +372,10 @@ void ownerMenu() {
             }
             case OwnerAccount::OwnerMenuChoice::TotalBalances: {
                 ClientAccount::displayTotalBalances();
+                break;
+            }
+            case OwnerAccount::OwnerMenuChoice::AdminLoginLog: {
+                AdminAccount::showLoginLog();
                 break;
             }
             default: { break; }
@@ -1151,7 +1154,7 @@ void adminMenu(
 }
 
 void login(
-    const AccountType &ACCOUNT_TYPE,
+    const PersonAccount::AccountType &ACCOUNT_TYPE,
     short &attempt
 ) {
     Utils::displayMenu(
@@ -1170,7 +1173,7 @@ void login(
     );
 
     switch (ACCOUNT_TYPE) {
-    case Owner: {
+    case PersonAccount::Owner: {
         OwnerAccount currentOwnerAccount {
             username,
             password
@@ -1188,24 +1191,27 @@ void login(
         }
         break;
     }
-    case Admin: {
+    case PersonAccount::Admin: {
         AdminAccount currentAdminAccount {
             username,
             password
         };
-        const AdminAccount TARGET_ADMIN_ACCOUNT = AdminAccount::findByUsernameInFile(
+        AdminAccount targetAdminAccount = AdminAccount::findByUsernameInFile(
             currentAdminAccount
         );
         if (
             AdminAccount::isValidAccountByUsernameAndPassword(
                 currentAdminAccount,
-                TARGET_ADMIN_ACCOUNT
+                targetAdminAccount
             )
         ) {
-            adminMenu(
-                TARGET_ADMIN_ACCOUNT
-            );
             attempt = 1;
+            AdminAccount::createSession(
+                targetAdminAccount
+            );
+            adminMenu(
+                targetAdminAccount
+            );
         }
         break;
     }
@@ -1239,7 +1245,7 @@ void performAccountTypeLoginMenu(
             )
         )
             login(
-                static_cast<AccountType>(
+                static_cast<PersonAccount::AccountType>(
                     choice - 1
                 ),
                 attempt

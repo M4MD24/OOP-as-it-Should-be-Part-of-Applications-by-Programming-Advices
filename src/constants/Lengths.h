@@ -33,12 +33,14 @@ namespace Lengths {
         }
 
         namespace Admin {
-            constexpr short COUNT_OF_MENU_LINES = 7;
+            constexpr short COUNT_OF_MENU_LINES = 8;
 
-            constexpr short LINE_LENGTH = 214;
+            constexpr short ACCOUNT_LINE_LENGTH = 214;
+            constexpr short LOGIN_LOG_LINE_LENGTH = 62;
 
             constexpr short USERNAME = Limits::Username::MAXIMUM;
             constexpr short PASSWORD = Limits::Password::MAXIMUM;
+            constexpr short LOGIN_DATE_TIME = 18;
 
             constexpr short COUNT_OF_PERMISSIONS = 7;
 

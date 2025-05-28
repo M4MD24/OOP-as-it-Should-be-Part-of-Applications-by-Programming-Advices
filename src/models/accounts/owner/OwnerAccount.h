@@ -4,7 +4,7 @@
 
 #include "../PersonAccount.h"
 #include "../../../constants/Delimiters.h"
-#include "../../../libraries/date/Date.h"
+#include "../../../libraries/datetime/Date.h"
 #include "../../../libraries/String.h"
 #include "../../../constants/FilePaths.h"
 #include "../../../constants/Lengths.h"
@@ -21,7 +21,8 @@ public:
         FindAdmin = 3,
         AdminList = 4,
         TotalBalances = 5,
-        Logout = 6
+        AdminLoginLog = 6,
+        Logout = 7
     };
 
 private:

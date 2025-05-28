@@ -36,7 +36,7 @@ namespace Texts {
                 "Find Admin",
                 "Admin List",
                 "Total Balances",
-                "Admin Event Log",
+                "Admin Login Log",
                 "Logout"
             };
 
@@ -80,6 +80,7 @@ namespace Texts {
                 "Find Client",
                 "Client List",
                 "Transaction",
+                "Client Event Log",
                 "Logout"
             };
 
@@ -87,6 +88,7 @@ namespace Texts {
 
             const string USERNAME = Owner::USERNAME;
             const string PASSWORD = Owner::PASSWORD;
+            const string LOGIN_DATE_TIME = "Login Date Time";
 
             namespace Permissions {
                 const string CREATE = "Create";
@@ -106,7 +108,9 @@ namespace Texts {
                 }
             }
 
-            const string LIST_COUNTER_MESSAGE = "Admin Count = ";
+            const string ACCOUNT_COUNTER_MESSAGE = "Admin Count = ";
+
+            const string LOGIN_LOG_COUNTER_MESSAGE = "Admin Login Log Count = ";
 
             const string MODIFY_MENU_TITLE = "Modify Client Menu";
             const string MODIFY_MENU_LINES[] = {

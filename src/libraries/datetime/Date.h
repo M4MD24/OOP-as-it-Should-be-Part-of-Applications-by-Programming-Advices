@@ -155,15 +155,6 @@ class Date {
         };
     }
 
-public:
-    Date() {
-        const Date DATE_NOW = getSystemDate();
-        day = DATE_NOW.day;
-        month = DATE_NOW.month;
-        year = DATE_NOW.year;
-        delimiter = DEFAULT_DELIMITER;
-    }
-
     static Date convertDateTextToDateStructure(
         const string &DATE_TEXT,
         const string &DELIMITER = DEFAULT_DELIMITER
@@ -175,6 +166,15 @@ public:
             ),
             DELIMITER
         );
+    }
+
+public:
+    Date() {
+        const Date DATE_NOW = getSystemDate();
+        day = DATE_NOW.day;
+        month = DATE_NOW.month;
+        year = DATE_NOW.year;
+        delimiter = DEFAULT_DELIMITER;
     }
 
     static void setDate(
@@ -1600,13 +1600,13 @@ public:
 
     string getDateText() {
         return to_string(
-                day
+                year
             ) + delimiter
             + to_string(
                 month
             ) + delimiter
             + to_string(
-                year
+                day
             );
     }
 

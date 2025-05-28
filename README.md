@@ -4,9 +4,21 @@
     - Utils
     - Input
     - Validation
+    - String
+    - DateTime
+        - Date
+        - Period
+        - Time
+- Constants
+    - Delimiters
+    - EncryptionAndDecryptionKeys
+    - FilePaths
+    - Lengths
+    - Limits
+    - Texts
 - Login
-  - Owner
-  - Admin
+    - Owner
+    - Admin
 - Manage Clients
     - Create New Client
     - Modify Client
@@ -30,7 +42,5 @@
     - Find Admin
     - Admin List
     - Total Balances
-    - ~~Admin Login Log~~
-        - ~~General~~
-        - ~~Specific Admin~~
+    - Admin Login Log
     - Logout
