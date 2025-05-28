@@ -4,6 +4,7 @@
 
 #include "../PersonAccount.h"
 #include "../../../constants/Delimiters.h"
+#include "../../../constants/EncryptionAndDecryptionKeys.h"
 #include "../../../libraries/datetime/Date.h"
 #include "../../../libraries/String.h"
 #include "../../../constants/FilePaths.h"
@@ -162,7 +163,10 @@ public:
                 vector<string> fields;
 
                 String::splitText(
-                    line,
+                    Utils::decryptText(
+                        line,
+                        EncryptionAndDecryptionKeys::Accounts::OWNER_ACCOUNTS
+                    ),
                     fields,
                     Delimiters::ACCOUNT_FIELDS
                 );

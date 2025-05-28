@@ -68,6 +68,7 @@ namespace Texts {
                 "Search",
                 "Show List",
                 "Transaction",
+                "Show Transfer Log",
                 "Back to ~{Modify Admin Menu}~"
             };
         }
@@ -98,6 +99,7 @@ namespace Texts {
                 const string SEARCH = "Search";
                 const string SHOW_LIST = "Show List";
                 const string TRANSACTION = "Transaction";
+                const string SHOW_TRANSFER_LOG = "Show Transfer Log";
 
                 namespace Text {
                     const string CREATE = "Can " + Permissions::CREATE;
@@ -106,6 +108,7 @@ namespace Texts {
                     const string SEARCH = "Can " + Permissions::SEARCH;
                     const string SHOW_LIST = "Can " + Permissions::SHOW_LIST;
                     const string TRANSACTION = "Can " + Permissions::TRANSACTION;
+                    const string SHOW_TRANSFER_LOG = "Can " + Permissions::SHOW_TRANSFER_LOG;
                 }
             }
 

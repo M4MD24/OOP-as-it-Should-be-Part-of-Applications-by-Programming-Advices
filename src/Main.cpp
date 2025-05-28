@@ -76,33 +76,43 @@ void modifyPermissionsMenu(
             );
             break;
         }
+        case AdminAccount::ShowTransferLogPermission: {
+            permission = AdminAccount::ShowTransferLog;
+            Input::readPermission(
+                status,
+                Texts::Person::Admin::Permissions::Text::SHOW_TRANSFER_LOG
+            );
+            break;
+        }
         case AdminAccount::BackToModifyAdminsMenu: { return; }
         default: { break; }
         }
 
-        bool permissionFound = false;
-        short index = 0;
-        while (index < permissions.size()) {
-            if (permissions[index] == permission) {
-                permissionFound = true;
-                break;
+        if (choice - 1 != AdminAccount::BackToModifyAdminsMenu) {
+            bool permissionFound = false;
+            short index = 0;
+            while (index < permissions.size()) {
+                if (permissions[index] == permission) {
+                    permissionFound = true;
+                    break;
+                }
+                index++;
             }
-            index++;
-        }
 
-        if (status == 1 && !permissionFound)
-            permissions.push_back(
-                permission
-            );
-        else if (status == 0 && permissionFound)
-            permissions.erase(
-                permissions.begin() + index
-            );
+            if (status == 1 && !permissionFound)
+                permissions.push_back(
+                    permission
+                );
+            else if (status == 0 && permissionFound)
+                permissions.erase(
+                    permissions.begin() + index
+                );
+        }
     } while (true);
 }
 
 void modifyMenu(
-    AdminAccount targetAccount
+    AdminAccount &targetAccount
 ) {
     AdminAccount originalAccount = targetAccount;
 
@@ -238,24 +248,32 @@ void modifyMenu(
         default: { break; }
         }
 
-        if (
-            Input::confirm()
-        ) {
-            targetAccount.setLastModifyDate(
-                {}
-            );
+        if (choice - 1 != AdminAccount::BackToManageAdminsMenu) {
+            if (
+                Input::confirm()
+            ) {
+                targetAccount.setLastModifyDate(
+                    {}
+                );
 
-            AdminAccount::modifyAccount(
-                targetAccount
-            );
+                if (choice - 1 != AdminAccount::Username)
+                    AdminAccount::modifyAccount(
+                        targetAccount
+                    );
+                else
+                    AdminAccount::modifyAccount(
+                        targetAccount,
+                        originalAccount.getUsername()
+                    );
 
-            originalAccount.setAccount(
-                targetAccount
-            );
-        } else
-            targetAccount.setAccount(
-                originalAccount
-            );
+                originalAccount.setAccount(
+                    targetAccount
+                );
+            } else
+                targetAccount.setAccount(
+                    originalAccount
+                );
+        }
     } while (true);
 }
 
@@ -296,20 +314,20 @@ void ownerMenu() {
                     username
                 };
 
-                const AdminAccount TARGET_ACCOUNT = AdminAccount::findByUsernameInFile(
+                AdminAccount targetAccount = AdminAccount::findByUsernameInFile(
                     currentAdminAccount
                 );
 
                 if (
                     AdminAccount::isValidAccountByUsername(
                         currentAdminAccount,
-                        TARGET_ACCOUNT,
+                        targetAccount,
                         false,
                         true
                     )
                 )
                     modifyMenu(
-                        TARGET_ACCOUNT
+                        targetAccount
                     );
                 break;
             }
@@ -508,7 +526,7 @@ void manageBalancesMenu(
 }
 
 void modifyMenu(
-    ClientAccount targetAccount
+    ClientAccount &targetAccount
 ) {
     ClientAccount originalAccount = targetAccount;
 
@@ -1003,7 +1021,7 @@ void transactionMenu(
 }
 
 void adminMenu(
-    AdminAccount adminAccount
+    AdminAccount &adminAccount
 ) {
     short choice;
     do {
@@ -1048,20 +1066,20 @@ void adminMenu(
                         id
                     };
 
-                    const ClientAccount TARGET_ACCOUNT = ClientAccount::findByID_InFile(
+                    ClientAccount targetAccount = ClientAccount::findByID_InFile(
                         currentClientAccount
                     );
 
                     if (
                         ClientAccount::isValidAccountByID(
                             currentClientAccount,
-                            TARGET_ACCOUNT,
+                            targetAccount,
                             false,
                             true
                         )
                     )
                         modifyMenu(
-                            TARGET_ACCOUNT
+                            targetAccount
                         );
                     break;
                 }

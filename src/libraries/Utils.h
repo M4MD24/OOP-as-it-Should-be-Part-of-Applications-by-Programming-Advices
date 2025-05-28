@@ -234,7 +234,7 @@ public:
 
     static string encryptText(
         string text,
-        const short ENCRYPTION_KEY
+        const short &ENCRYPTION_KEY
     ) {
         for (int index = 0; index < text.length(); ++index)
             text[index] = static_cast<char>(static_cast<int>(text[index]) + ENCRYPTION_KEY);
@@ -243,7 +243,7 @@ public:
 
     static string decryptText(
         string text,
-        const short ENCRYPTION_KEY
+        const short &ENCRYPTION_KEY
     ) {
         for (int index = 0; index < text.length(); ++index)
             text[index] = static_cast<char>(static_cast<int>(text[index]) - ENCRYPTION_KEY);

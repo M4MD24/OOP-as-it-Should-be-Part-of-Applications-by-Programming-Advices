@@ -4,6 +4,7 @@
 
 #include "../PersonAccount.h"
 #include "../../../constants/Delimiters.h"
+#include "../../../constants/EncryptionAndDecryptionKeys.h"
 #include "../../../constants/FilePaths.h"
 #include "../../../constants/Lengths.h"
 #include "../../../constants/Texts.h"
@@ -23,7 +24,8 @@ public:
         Delete = 2,
         Search = 3,
         ShowList = 4,
-        Transaction = 5
+        Transaction = 5,
+        ShowTransferLog = 6
     };
 
     enum AdminMenuChoice {
@@ -56,7 +58,8 @@ public:
         SearchPermission = 3,
         ShowListPermission = 4,
         TransactionPermission = 5,
-        BackToModifyAdminsMenu = 6
+        ShowTransferLogPermission = 6,
+        BackToModifyAdminsMenu = 7
     };
 
 private:
@@ -201,6 +204,10 @@ private:
             permissions[5],
             Lengths::Person::Admin::Permissions::TRANSACTION
         );
+        Utils::displayMessage(
+            permissions[6],
+            Lengths::Person::Admin::Permissions::SHOW_TRANSFER_LOG
+        );
 
         Utils::displayMessage(
             adminAccount.getJoinDate().getDateText(),
@@ -277,6 +284,10 @@ private:
             Texts::Person::Admin::Permissions::TRANSACTION,
             Lengths::Person::Admin::Permissions::TRANSACTION
         );
+        Utils::displayMessage(
+            Texts::Person::Admin::Permissions::SHOW_TRANSFER_LOG,
+            Lengths::Person::Admin::Permissions::SHOW_TRANSFER_LOG
+        );
 
         Utils::displayMessage(
             Texts::Person::JOIN_DATE,
@@ -340,7 +351,10 @@ private:
         };
 
         if (file.is_open())
-            file << RECORD_TEXT << endl;
+            file << Utils::encryptText(
+                RECORD_TEXT,
+                EncryptionAndDecryptionKeys::Accounts::ADMIN_ACCOUNTS
+            ) << endl;
     }
 
     static string convertRecordToSessionText(
@@ -473,7 +487,10 @@ public:
         };
 
         if (file.is_open())
-            file << SESSION_TEXT << endl;
+            file << Utils::encryptText(
+                SESSION_TEXT,
+                EncryptionAndDecryptionKeys::Logs::ADMIN_LOGIN_LOG
+            ) << endl;
     }
 
     static void printLoginLogHeader() {
@@ -556,7 +573,10 @@ public:
                 vector<string> fields;
 
                 String::splitText(
-                    line,
+                    Utils::decryptText(
+                        line,
+                        EncryptionAndDecryptionKeys::Logs::ADMIN_LOGIN_LOG
+                    ),
                     fields,
                     Delimiters::ACCOUNT_FIELDS
                 );
@@ -614,6 +634,38 @@ public:
         if (file.is_open())
             for (const AdminAccount &CURRENT_ACCOUNT : ACCOUNTS)
                 if (TARGET_ACCOUNT.username != CURRENT_ACCOUNT.username)
+                    saveAccountOnFile(
+                        CURRENT_ACCOUNT
+                    );
+                else
+                    saveAccountOnFile(
+                        TARGET_ACCOUNT
+                    );
+
+        Utils::displayMessage(
+            "The admin account has been modified."
+        );
+
+        file.close();
+    }
+
+    static void modifyAccount(
+        const AdminAccount &TARGET_ACCOUNT,
+        const string &OLD_USERNAME
+    ) {
+        const vector<AdminAccount> ACCOUNTS = readAccountsFileToRecords();
+
+        fstream file {
+            FilePaths::ADMIN_ACCOUNTS_FILE_PATH,
+            ios::out | ios::trunc
+        };
+
+        if (file.is_open())
+            for (const AdminAccount &CURRENT_ACCOUNT : ACCOUNTS)
+                if (
+                    CURRENT_ACCOUNT.username != TARGET_ACCOUNT.username &&
+                    CURRENT_ACCOUNT.username != OLD_USERNAME
+                )
                     saveAccountOnFile(
                         CURRENT_ACCOUNT
                     );
@@ -718,6 +770,18 @@ public:
         );
     }
 
+    static void readTransferLogPermission(
+        vector<AdminPermission> &permissions,
+        bool &status
+    ) {
+        readPermission(
+            permissions,
+            ShowTransferLog,
+            Texts::Person::Admin::Permissions::Text::SHOW_TRANSFER_LOG,
+            status
+        );
+    }
+
     static void readPermissions(
         vector<AdminPermission> &permissions
     ) {
@@ -749,6 +813,11 @@ public:
         );
 
         readTransactionPermission(
+            permissions,
+            status
+        );
+
+        readTransferLogPermission(
             permissions,
             status
         );
@@ -853,7 +922,10 @@ public:
                 vector<string> fields;
 
                 String::splitText(
-                    line,
+                    Utils::decryptText(
+                        line,
+                        EncryptionAndDecryptionKeys::Accounts::ADMIN_ACCOUNTS
+                    ),
                     fields,
                     Delimiters::ACCOUNT_FIELDS
                 );
@@ -896,7 +968,10 @@ public:
                 vector<string> fields;
 
                 String::splitText(
-                    line,
+                    Utils::decryptText(
+                        line,
+                        EncryptionAndDecryptionKeys::Accounts::ADMIN_ACCOUNTS
+                    ),
                     fields,
                     Delimiters::ACCOUNT_FIELDS
                 );

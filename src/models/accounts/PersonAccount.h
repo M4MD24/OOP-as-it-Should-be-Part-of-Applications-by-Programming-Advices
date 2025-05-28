@@ -61,7 +61,7 @@ public:
     void setSecondName(
         const string &SECOND_NAME
     ) {
-        fullName.firstName = SECOND_NAME;
+        fullName.secondName = SECOND_NAME;
     }
 
     string getSecondName() {

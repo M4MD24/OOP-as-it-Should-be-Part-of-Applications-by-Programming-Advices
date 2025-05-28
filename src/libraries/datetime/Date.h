@@ -1600,13 +1600,13 @@ public:
 
     string getDateText() {
         return to_string(
-                year
+                day
             ) + delimiter
             + to_string(
                 month
             ) + delimiter
             + to_string(
-                day
+                year
             );
     }
 

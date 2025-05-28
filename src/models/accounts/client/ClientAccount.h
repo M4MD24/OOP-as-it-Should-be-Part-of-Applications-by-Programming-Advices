@@ -179,7 +179,10 @@ private:
         };
 
         if (file.is_open())
-            file << RECORD_TEXT << endl;
+            file << Utils::encryptText(
+                RECORD_TEXT,
+                EncryptionAndDecryptionKeys::Accounts::CLIENT_ACCOUNTS
+            ) << endl;
     }
 
     static string convertRecordToTransferText(
@@ -313,7 +316,7 @@ public:
         Balance &transferredBalance,
         ClientAccount &to
     ) {
-        const string SESSION_TEXT = convertRecordToTransferText(
+        const string TRANSFER_TEXT = convertRecordToTransferText(
             from,
             transferredBalance,
             to
@@ -325,7 +328,10 @@ public:
         };
 
         if (file.is_open())
-            file << SESSION_TEXT << endl;
+            file << Utils::encryptText(
+                TRANSFER_TEXT,
+                EncryptionAndDecryptionKeys::Logs::CLIENT_TRANSFER_LOG
+            ) << endl;
     }
 
     static void printTransferLogHeader() {
@@ -418,7 +424,10 @@ public:
                 vector<string> fields;
 
                 String::splitText(
-                    line,
+                    Utils::decryptText(
+                        line,
+                        EncryptionAndDecryptionKeys::Logs::CLIENT_TRANSFER_LOG
+                    ),
                     fields,
                     Delimiters::ACCOUNT_FIELDS
                 );
@@ -698,7 +707,10 @@ public:
                 vector<string> fields;
 
                 String::splitText(
-                    line,
+                    Utils::decryptText(
+                        line,
+                        EncryptionAndDecryptionKeys::Accounts::CLIENT_ACCOUNTS
+                    ),
                     fields,
                     Delimiters::ACCOUNT_FIELDS
                 );
@@ -739,7 +751,10 @@ public:
                 vector<string> fields;
 
                 String::splitText(
-                    line,
+                    Utils::decryptText(
+                        line,
+                        EncryptionAndDecryptionKeys::Accounts::CLIENT_ACCOUNTS
+                    ),
                     fields,
                     Delimiters::ACCOUNT_FIELDS
                 );
