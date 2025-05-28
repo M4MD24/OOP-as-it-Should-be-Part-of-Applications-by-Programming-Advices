@@ -46,3 +46,4 @@
 2. Concepts
    1. Template
       1. Function
+      2. Class
