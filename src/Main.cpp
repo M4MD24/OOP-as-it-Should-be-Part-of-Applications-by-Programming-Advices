@@ -518,7 +518,7 @@ void modifyMenu(
         );
 
         Utils::displayLine(
-            Texts::Person::Client::LINE_CHARACTER,
+            Texts::Person::Client::LINE_INFORMATION_CHARACTER,
             Lengths::Person::Client::LINE_LENGTH
         );
 
@@ -886,6 +886,12 @@ void transactionMenu(
                                 false
                             );
 
+                            ClientAccount::createTransfer(
+                                currentAccount,
+                                withdrawnBalanceFromCurrentAccount,
+                                targetAnotherAccount
+                            );
+
                             originalAccount.setAccount(
                                 currentAccount
                             );
@@ -1143,7 +1149,10 @@ void adminMenu(
                         );
                     break;
                 }
-                case AdminAccount::AdminMenuChoice::ClientEventLog: { return; }
+                case AdminAccount::AdminMenuChoice::ClientTransferLog: {
+                    ClientAccount::showTransferLog();
+                    break;
+                }
                 default: { break; }
                 }
             } else

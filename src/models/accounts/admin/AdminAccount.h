@@ -33,7 +33,7 @@ public:
         FindClient = 3,
         ClientList = 4,
         TransactionClient = 5,
-        ClientEventLog = 6,
+        ClientTransferLog = 6,
         Logout = 7
     };
 
@@ -351,22 +351,6 @@ private:
             (Date().getDateText() + ' ' + Time().getTimeText());
     }
 
-    static void saveSessionOnFile(
-        AdminAccount &account
-    ) {
-        const string SESSION_TEXT = convertRecordToSessionText(
-            account
-        );
-
-        fstream file {
-            FilePaths::ADMIN_LOGIN_LOG_FILE_PATH,
-            ios::out | ios::app
-        };
-
-        if (file.is_open())
-            file << SESSION_TEXT << endl;
-    }
-
     AdminAccount(): PersonAccount(
         {},
         {},
@@ -479,9 +463,17 @@ public:
     static void createSession(
         AdminAccount &account
     ) {
-        saveSessionOnFile(
+        const string SESSION_TEXT = convertRecordToSessionText(
             account
         );
+
+        fstream file {
+            FilePaths::ADMIN_LOGIN_LOG_FILE_PATH,
+            ios::out | ios::app
+        };
+
+        if (file.is_open())
+            file << SESSION_TEXT << endl;
     }
 
     static void printLoginLogHeader() {
@@ -503,8 +495,8 @@ public:
         );
 
         Utils::displayMessage(
-            Texts::Person::Admin::LOGIN_DATE_TIME,
-            Lengths::Person::Admin::LOGIN_DATE_TIME
+            Texts::Person::DATE_TIME,
+            Lengths::Person::DATE_TIME
         );
 
         cout << endl;
@@ -532,7 +524,7 @@ public:
 
         Utils::displayMessage(
             FIELDS[2],
-            Lengths::Person::Admin::LOGIN_DATE_TIME
+            Lengths::Person::DATE_TIME
         );
 
         cout << endl;

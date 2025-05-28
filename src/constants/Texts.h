@@ -26,6 +26,8 @@ namespace Texts {
         const string JOIN_DATE = "Join Date";
         const string LAST_MODIFY_DATE = "Last Modify Date";
 
+        const string DATE_TIME = "Date Time";
+
         namespace Owner {
             const string MENU_TITLE = "Manage Admins Menu";
 
@@ -80,7 +82,7 @@ namespace Texts {
                 "Find Client",
                 "Client List",
                 "Transaction",
-                "Client Event Log",
+                "Client Transfer Log",
                 "Logout"
             };
 
@@ -88,7 +90,6 @@ namespace Texts {
 
             const string USERNAME = Owner::USERNAME;
             const string PASSWORD = Owner::PASSWORD;
-            const string LOGIN_DATE_TIME = "Login Date Time";
 
             namespace Permissions {
                 const string CREATE = "Create";
@@ -148,8 +149,12 @@ namespace Texts {
 
         namespace Client {
             const string LIST_COUNTER_MESSAGE = "Client Count = ";
-            constexpr char LINE_CHARACTER = '#';
+            constexpr char LINE_INFORMATION_CHARACTER = '#';
+            constexpr char LINE_TABLE_CHARACTER = '-';
             constexpr char ID_DELIMITER = '-';
+            const string TRANSFER_LOG_COUNTER_MESSAGE = "Client Transfer Log Count = ";
+            const string ID = "ID";
+            const string BALANCE = "Balance";
         }
     }
 

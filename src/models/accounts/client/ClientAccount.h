@@ -182,6 +182,19 @@ private:
             file << RECORD_TEXT << endl;
     }
 
+    static string convertRecordToTransferText(
+        ClientAccount &from,
+        Balance &balance,
+        ClientAccount &to
+    ) {
+        return from.getID() + Delimiters::ACCOUNT_FIELDS +
+            to_string(
+                balance.getCount()
+            ) + ' ' + balance.getCode() + Delimiters::ACCOUNT_FIELDS +
+            to.getID() + Delimiters::ACCOUNT_FIELDS +
+            (Date().getDateText() + ' ' + Time().getTimeText());
+    }
+
     ClientAccount(): PersonAccount(
         {},
         {},
@@ -295,6 +308,135 @@ public:
         return balances;
     }
 
+    static void createTransfer(
+        ClientAccount &from,
+        Balance &transferredBalance,
+        ClientAccount &to
+    ) {
+        const string SESSION_TEXT = convertRecordToTransferText(
+            from,
+            transferredBalance,
+            to
+        );
+
+        fstream file {
+            FilePaths::CLIENT_TRANSFER_LOG_FILE_PATH,
+            ios::out | ios::app
+        };
+
+        if (file.is_open())
+            file << SESSION_TEXT << endl;
+    }
+
+    static void printTransferLogHeader() {
+        Utils::displayLine(
+            Texts::Person::Client::LINE_TABLE_CHARACTER,
+            Lengths::Person::Client::TRANSFER_LOG_LINE_LENGTH
+        );
+
+        cout << '|';
+
+        Utils::displayMessage(
+            "Depositor " + Texts::Person::Client::ID,
+            Lengths::Person::Client::ID
+        );
+
+        Utils::displayMessage(
+            Texts::Person::Client::BALANCE,
+            Lengths::Person::Client::BALANCE
+        );
+
+        Utils::displayMessage(
+            "Recipient " + Texts::Person::Client::ID,
+            Lengths::Person::Client::ID
+        );
+
+        Utils::displayMessage(
+            Texts::Person::DATE_TIME,
+            Lengths::Person::DATE_TIME
+        );
+
+        cout << endl;
+
+        Utils::displayLine(
+            Texts::Person::Client::LINE_TABLE_CHARACTER,
+            Lengths::Person::Client::TRANSFER_LOG_LINE_LENGTH
+        );
+    }
+
+    static void printTransferLogBody(
+        const vector<string> &FIELDS
+    ) {
+        cout << '|';
+
+        Utils::displayMessage(
+            FIELDS[0],
+            Lengths::Person::Client::ID
+        );
+
+        Utils::displayMessage(
+            FIELDS[1],
+            Lengths::Person::Client::BALANCE
+        );
+
+        Utils::displayMessage(
+            FIELDS[2],
+            Lengths::Person::Client::ID
+        );
+
+        Utils::displayMessage(
+            FIELDS[3],
+            Lengths::Person::DATE_TIME
+        );
+
+        cout << endl;
+
+        Utils::displayLine(
+            Texts::Person::Client::LINE_TABLE_CHARACTER,
+            Lengths::Person::Client::TRANSFER_LOG_LINE_LENGTH
+        );
+    }
+
+    static void showTransferLog() {
+        printTransferLogHeader();
+        fstream file {
+            FilePaths::CLIENT_TRANSFER_LOG_FILE_PATH,
+            ios::in
+        };
+
+        if (file.is_open()) {
+            string line;
+            size_t counter = 0;
+            while (
+                getline(
+                    file,
+                    line
+                )
+            ) {
+                counter++;
+
+                vector<string> fields;
+
+                String::splitText(
+                    line,
+                    fields,
+                    Delimiters::ACCOUNT_FIELDS
+                );
+
+                if (fields.size() == 4)
+                    printTransferLogBody(
+                        fields
+                    );
+            }
+
+            Utils::displayNote(
+                Texts::Person::Client::TRANSFER_LOG_COUNTER_MESSAGE + to_string(
+                    counter
+                )
+            );
+        }
+    }
+
     static void displayTotalBalances() {
         vector<Balance> totalBalances;
         for (ClientAccount &clientAccount : readAccountsFileToRecords()) {
@@ -379,7 +521,7 @@ public:
         ClientAccount &account
     ) {
         Utils::displayLine(
-            Texts::Person::Client::LINE_CHARACTER,
+            Texts::Person::Client::LINE_INFORMATION_CHARACTER,
             Lengths::Person::Client::LINE_LENGTH
         );
         Utils::displayMenu(
@@ -410,7 +552,7 @@ public:
                     targetAccount
                 );
                 Utils::displayLine(
-                    Texts::Person::Client::LINE_CHARACTER,
+                    Texts::Person::Client::LINE_INFORMATION_CHARACTER,
                     Lengths::Person::Client::LINE_LENGTH
                 );
             }
@@ -614,7 +756,7 @@ public:
 
             if (counter)
                 Utils::displayLine(
-                    Texts::Person::Client::LINE_CHARACTER,
+                    Texts::Person::Client::LINE_INFORMATION_CHARACTER,
                     Lengths::Person::Client::LINE_LENGTH
                 );
 

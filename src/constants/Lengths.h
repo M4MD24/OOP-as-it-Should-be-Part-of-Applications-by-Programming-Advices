@@ -19,6 +19,8 @@ namespace Lengths {
         constexpr short JOIN_DATE = 9;
         constexpr short LAST_MODIFY_DATE = 16;
 
+        constexpr short DATE_TIME = 18;
+
         namespace Owner {
             constexpr short COUNT_OF_MENU_LINES = 8;
 
@@ -40,7 +42,6 @@ namespace Lengths {
 
             constexpr short USERNAME = Limits::Username::MAXIMUM;
             constexpr short PASSWORD = Limits::Password::MAXIMUM;
-            constexpr short LOGIN_DATE_TIME = 18;
 
             constexpr short COUNT_OF_PERMISSIONS = 7;
 
@@ -66,8 +67,11 @@ namespace Lengths {
             constexpr short LINE_LENGTH = 40;
             constexpr short ID = 19;
             constexpr short PIN_CODE = 4;
+            constexpr short BALANCE_COUNT = 20;
             constexpr short BALANCE_CODE = 3;
+            constexpr short BALANCE = 24;
             constexpr short COUNT_OF_FIELDS = 10;
+            constexpr short TRANSFER_LOG_LINE_LENGTH = 85;
         }
     }
 }

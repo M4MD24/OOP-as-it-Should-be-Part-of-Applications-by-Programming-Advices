@@ -30,10 +30,7 @@
         - Withdraw
         - Transfer
         - Conversion
-    - ~~Client Event Log~~
-        - ~~General~~
-        - ~~Transfer~~
-        - ~~Specific Client~~
+    - Client Transfer Log
     - Logout
 - Manage Admins
     - Create New Admin
