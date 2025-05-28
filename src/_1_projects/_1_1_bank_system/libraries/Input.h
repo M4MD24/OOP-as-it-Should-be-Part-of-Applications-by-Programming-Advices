@@ -12,38 +12,9 @@ using namespace std;
 
 class Input {
 public:
+    template <typename type>
     static void readNumber(
-        short &value
-    ) {
-        cin >> value;
-    }
-
-    static void readNumber(
-        int &value
-    ) {
-        cin >> value;
-    }
-
-    static void readNumber(
-        float &value
-    ) {
-        cin >> value;
-    }
-
-    static void readNumber(
-        double &value
-    ) {
-        cin >> value;
-    }
-
-    static void readNumber(
-        long double &value
-    ) {
-        cin >> value;
-    }
-
-    static void readNumber(
-        size_t &value
+        type &value
     ) {
         cin >> value;
     }
@@ -78,73 +49,9 @@ public:
         cin >> value;
     }
 
+    template <typename type>
     static void readNumber(
-        short &value,
-        const string &MESSAGE
-    ) {
-        Utils::displayMessage(
-            MESSAGE
-        );
-
-        readNumber(
-            value
-        );
-    }
-
-    static void readNumber(
-        int &value,
-        const string &MESSAGE
-    ) {
-        Utils::displayMessage(
-            MESSAGE
-        );
-
-        readNumber(
-            value
-        );
-    }
-
-    static void readNumber(
-        float &value,
-        const string &MESSAGE
-    ) {
-        Utils::displayMessage(
-            MESSAGE
-        );
-
-        readNumber(
-            value
-        );
-    }
-
-    static void readNumber(
-        double &value,
-        const string &MESSAGE
-    ) {
-        Utils::displayMessage(
-            MESSAGE
-        );
-
-        readNumber(
-            value
-        );
-    }
-
-    static void readNumber(
-        long double &value,
-        const string &MESSAGE
-    ) {
-        Utils::displayMessage(
-            MESSAGE
-        );
-
-        readNumber(
-            value
-        );
-    }
-
-    static void readNumber(
-        size_t &value,
+        type &value,
         const string &MESSAGE
     ) {
         Utils::displayMessage(
